@@ -12,3 +12,6 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/bkmongo
