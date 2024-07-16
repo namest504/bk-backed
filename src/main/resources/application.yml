@@ -1,17 +1,35 @@
 spring:
+#  datasource:
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    password:
+#    url: jdbc:h2:mem:bklocal;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+#  jpa:
+#    hibernate:
+#      ddl-auto: create-drop
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    properties:
+#      hibernate:
+#        show_sql: true
+#        format_sql: true
   datasource:
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    url: jdbc:h2:mem:bklocal;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+    url: jdbc:mysql://localhost:3306/bklocal
+
   jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create-drop
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        show_sql: true
         format_sql: true
   data:
     mongodb:
       uri: mongodb://localhost:27017/bkmongo
+
+  batch:
+    jdbc:
+      initialize-schema: always

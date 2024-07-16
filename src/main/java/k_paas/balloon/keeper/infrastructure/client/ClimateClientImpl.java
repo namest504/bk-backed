@@ -90,7 +90,7 @@ public class ClimateClientImpl implements ClimateClient {
                 sb.append(line);
             }
         }
-        log.info("문자열 파싱 완료 쓰레드명 : [{}] ", Thread.currentThread().getName());
+//        log.info("문자열 파싱 완료 쓰레드명 : [{}] ", Thread.currentThread().getName());
         return resStringArray;
     }
 }
