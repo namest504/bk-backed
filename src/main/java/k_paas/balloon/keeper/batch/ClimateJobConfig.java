@@ -44,7 +44,7 @@ public class ClimateJobConfig {
         this.climateWriter = climateWriter;
     }
 
-    @Scheduled(cron = "0 10 */6 * * *")
+    @Scheduled(cron = "0 10 */8 * * *")
     public void execute() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
