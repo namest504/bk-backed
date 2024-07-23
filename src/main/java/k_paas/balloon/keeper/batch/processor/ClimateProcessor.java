@@ -1,7 +1,7 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.processor;
 
 import java.util.List;
-import k_paas.balloon.keeper.application.climate.dto.UpdateClimateServiceSpec;
+import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import k_paas.balloon.keeper.domain.climate.entity.Climate;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.reader;
 
 import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_X_INDEX;
 import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_Y_INDEX;
@@ -8,8 +8,8 @@ import static k_paas.balloon.keeper.global.constant.ClimateContants.MAX_PREDICT_
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import k_paas.balloon.keeper.application.climate.dto.UpdateClimateServiceSpec;
-import k_paas.balloon.keeper.application.climate.service.ClimateAsyncService;
+import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
+import k_paas.balloon.keeper.batch.service.ClimateAsyncService;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 

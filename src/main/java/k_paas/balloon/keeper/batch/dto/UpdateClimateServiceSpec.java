@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.application.climate.dto;
+package k_paas.balloon.keeper.batch.dto;
 
 import k_paas.balloon.keeper.domain.climate.entity.Climate;
 import k_paas.balloon.keeper.domain.climate.entity.Climate.ClimateData;
