@@ -15,8 +15,8 @@ public class AsyncThreadConfig {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(3); // 기본 스레드 수
         // TODO: 적정 Thread 및 Queue 사이즈 설정 필요
-        taskExecutor.setMaxPoolSize(Integer.MAX_VALUE); // 최대 스레드 수
-        taskExecutor.setQueueCapacity(Integer.MAX_VALUE); // Queue 사이즈
+        taskExecutor.setMaxPoolSize(50); // 최대 스레드 수
+        taskExecutor.setQueueCapacity(100); // Queue 사이즈
         taskExecutor.setThreadNamePrefix("Executor-"); // 스레드 접두사
         return taskExecutor;
     }
