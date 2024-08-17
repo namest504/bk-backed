@@ -23,3 +23,5 @@ spec:
           image: contest73-backend.kr.ncr.ntruss.com/contest73-backend:latest
           ports:
             - containerPort: 8080
+      imagePullSecrets:
+        - name: regcred
