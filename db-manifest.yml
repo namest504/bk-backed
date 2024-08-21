@@ -17,7 +17,7 @@ spec:
         - name: mysql-db
           image: mysql:latest # mysql
           volumeMounts:
-            - mountPath: /var/lib/mysql
+            - mountPath: /volume/mysql-pv
               name: mysql-volume
           env:
             - name: MYSQL_ROOT_PASSWORD
@@ -99,7 +99,7 @@ spec:
             successThreshold: 1
             failureThreshold: 6
           volumeMounts:
-            - mountPath: /var/lib/mongo
+            - mountPath: /volume/mongo-pv/climate
               name: mongo-volume
           env:
             - name: MONGO_ROOT_PASSWORD
