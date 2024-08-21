@@ -75,7 +75,7 @@ spec:
       containers:
         - name: mongo-db
           image: mongo:latest # mongo
-          args: [ "mongod", "--dbpath","/volume/mongo-pv/climate" ]
+          args: [ "mongod", "--dbpath","/volume/mongo-pv" ]
           livenessProbe:
             exec:
               command:
@@ -99,7 +99,7 @@ spec:
             successThreshold: 1
             failureThreshold: 6
           volumeMounts:
-            - mountPath: /volume/mongo-pv/climate
+            - mountPath: /volume/mongo-pv
               name: mongo-volume
           env:
             - name: MONGO_ROOT_PASSWORD
