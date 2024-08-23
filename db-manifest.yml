@@ -57,6 +57,21 @@ spec:
             claimName: mysql-pvc
 
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-mysql-service
+  labels:
+    app: my-mysql-db-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: my-mysql-db
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
