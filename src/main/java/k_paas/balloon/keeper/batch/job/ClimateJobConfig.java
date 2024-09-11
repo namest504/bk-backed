@@ -2,10 +2,8 @@ package k_paas.balloon.keeper.batch.job;
 
 import java.util.List;
 import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
-import k_paas.balloon.keeper.batch.processor.ClimateProcessor;
 import k_paas.balloon.keeper.batch.reader.ClimateReader;
 import k_paas.balloon.keeper.batch.writer.ClimateWriter;
-import k_paas.balloon.keeper.domain.climate.entity.Climate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -26,14 +24,12 @@ public class ClimateJobConfig {
     private final PlatformTransactionManager transactionManager;
 
     private final ClimateReader climateReader;
-    private final ClimateProcessor climateProcessor;
     private final ClimateWriter climateWriter;
 
-    public ClimateJobConfig(JobRepository jobRepository, PlatformTransactionManager transactionManager, ClimateReader climateReader, ClimateProcessor climateProcessor, ClimateWriter climateWriter) {
+    public ClimateJobConfig(JobRepository jobRepository, PlatformTransactionManager transactionManager, ClimateReader climateReader, ClimateWriter climateWriter) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.climateReader = climateReader;
-        this.climateProcessor = climateProcessor;
         this.climateWriter = climateWriter;
     }
 
@@ -46,10 +42,10 @@ public class ClimateJobConfig {
 
     @Bean
     public Step climateStep() {
+        log.info("climateStep start");
         return new StepBuilder("climateStep", jobRepository)
-                .<List<UpdateClimateServiceSpec>, List<Climate>>chunk(100, transactionManager)
+                .<List<UpdateClimateServiceSpec>, List<UpdateClimateServiceSpec>>chunk(10, transactionManager)
                 .reader(climateReader)
-                .processor(climateProcessor)
                 .writer(climateWriter)
                 .build();
     }

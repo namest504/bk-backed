@@ -1,8 +1,11 @@
 package k_paas.balloon.keeper.batch.writer;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import k_paas.balloon.keeper.domain.climate.entity.Climate;
+import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -12,28 +15,33 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class ClimateWriter implements ItemWriter<List<Climate>> {
+public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>> {
 
-    private final MongoOperations mongoOperations;
-
-    public ClimateWriter(MongoOperations mongoOperations) {
-        this.mongoOperations = mongoOperations;
-    }
+    private static final String CSV_FILE_PATH = "climate_data.csv";
 
     @Override
-    public void write(Chunk<? extends List<Climate>> climates) {
-        List<Climate> allClimates = new ArrayList<>();
-        for (List<Climate> climateData : climates) {
-            allClimates.addAll(climateData);
-        }
+    public void write(Chunk<? extends List<UpdateClimateServiceSpec>> climates) {
+        log.info("climates.size() : {}", climates.size());
 
-        if (!allClimates.isEmpty()) {
-            log.info("writer execute {} things inserted to mongoDB", allClimates.size());
-            BulkOperations bulkOps = mongoOperations.bulkOps(BulkOperations.BulkMode.UNORDERED, Climate.class);
-            for (Climate climate : allClimates) {
-                bulkOps.insert(climate);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_FILE_PATH, true))) {
+            for (List<UpdateClimateServiceSpec> climateData : climates) {
+                for (UpdateClimateServiceSpec spec : climateData) {
+                    String csvLine = convertToCSV(spec);
+                    writer.write(csvLine);
+                    writer.newLine();
+                }
             }
-            bulkOps.execute();
+        } catch (IOException e) {
+            log.error("Error writing to CSV file", e);
         }
+    }
+
+    private String convertToCSV(UpdateClimateServiceSpec spec) {
+        return String.format("%d,%d,%d,%s,%s",
+                spec.y(),
+                spec.x(),
+                spec.pressure(),
+                spec.uVector(),
+                spec.vVector());
     }
 }

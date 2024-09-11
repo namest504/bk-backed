@@ -21,8 +21,8 @@ public class ClimateApiDto {
     @Override
     public String toString() {
         return "ClimateApiDto {"
-                + "\n" + "UVector = " + UVector
-                + "\n" + "VVector = " + VVector
+                + "\n" + "uVector = " + UVector
+                + "\n" + "vVector = " + VVector
                 + "\n" + "pressure = " + pressure
                 + "\n" + "predictHour = " + predictHour
                 + "\n" + "}";

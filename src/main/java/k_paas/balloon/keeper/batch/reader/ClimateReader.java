@@ -5,19 +5,24 @@ import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_Y_INDE
 import static k_paas.balloon.keeper.global.constant.ClimateContants.ISOBARIC_ALTITUDE;
 import static k_paas.balloon.keeper.global.constant.ClimateContants.MAX_PREDICT_HOUR;
 
+import jakarta.persistence.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import k_paas.balloon.keeper.batch.service.ClimateAsyncService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>> {
 
-    private List<List<UpdateClimateServiceSpec>> chunkedDataList;
-    private int currentIndex = 0;
+    private int currentAltitudeIndex = 0;
+    private static final int CHUNK_SIZE = 100;
+    private boolean isCompleted = false;
+    private List<UpdateClimateServiceSpec> buffer = new ArrayList<>();
 
     private final ClimateAsyncService climateAsyncService;
 
@@ -27,27 +32,36 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
 
     @Override
     public List<UpdateClimateServiceSpec> read() {
-        if (chunkedDataList == null) {
-            chunkedDataList = new ArrayList<>();
-            List<UpdateClimateServiceSpec> allData = new ArrayList<>();
-            for (int altitude = 0; altitude < ISOBARIC_ALTITUDE.length; altitude++) {
-                for (int predictHour = 0; predictHour <= MAX_PREDICT_HOUR; predictHour++) {
-                    allData.addAll(processClimateData(altitude, predictHour));
-                }
-            }
-            // 데이터를 청크 단위로 분할
-            int chunkSize = 1000; // 청크 크기
-            for (int i = 0; i < allData.size(); i += chunkSize) {
-                chunkedDataList.add(allData.subList(i, Math.min(i + chunkSize, allData.size())));
-            }
-            currentIndex = 0;
+        if (isCompleted) {
+            return null;
         }
 
-        if (currentIndex < chunkedDataList.size()) {
-            return chunkedDataList.get(currentIndex++);
-        } else {
-            return null; // 모든 청크를 다 읽으면 null을 반환하여 읽기를 종료함
+        List<UpdateClimateServiceSpec> chunk = new ArrayList<>();
+
+        while (chunk.size() < CHUNK_SIZE && !isCompleted) {
+            if (buffer.isEmpty()) {
+                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
+                    isCompleted = true;
+                    break;
+                }
+                log.info("Processing altitude: {}, predict hour: {}", ISOBARIC_ALTITUDE[currentAltitudeIndex], 0);
+                buffer = processClimateData(currentAltitudeIndex, 0);
+
+                currentAltitudeIndex++;
+            }
+
+            int itemsToAdd = Math.min(CHUNK_SIZE - chunk.size(), buffer.size());
+            chunk.addAll(buffer.subList(0, itemsToAdd));
+            buffer = new ArrayList<>(buffer.subList(itemsToAdd, buffer.size()));
         }
+
+        if (chunk.isEmpty()) {
+            isCompleted = true;
+            return null;
+        }
+
+        log.info("Returning chunk with size: {}", chunk.size());
+        return chunk;
     }
 
     private List<UpdateClimateServiceSpec> processClimateData(int altitude, int predictHour) {
@@ -88,12 +102,9 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
         return UpdateClimateServiceSpec.builder()
                 .y(y)
                 .x(x)
-                .prespredictHour(predictHour)
-                .pressure(altitude)
-                .UVector(uVectorArray[y][x])
-                .VVector(vVectorArray[y][x])
-                .predictHour(predictHour)
-                .pressureValue(ISOBARIC_ALTITUDE[altitude])
+                .pressure(ISOBARIC_ALTITUDE[altitude])
+                .uVector(uVectorArray[y][x])
+                .vVector(vVectorArray[y][x])
                 .build();
     }
 }
