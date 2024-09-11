@@ -40,7 +40,8 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
 
         while (chunk.size() < CHUNK_SIZE && !isCompleted) {
             if (buffer.isEmpty()) {
-                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
+//                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
+                if (currentAltitudeIndex >= 1) {
                     isCompleted = true;
                     break;
                 }

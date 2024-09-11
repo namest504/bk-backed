@@ -20,3 +20,7 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
+
+ncp:
+  accessKey: ${NCP_ACCESSKEY}
+  secretKey: ${NCP_SECRETKEY}

@@ -12,10 +12,12 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 
 @Slf4j
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class Application {
 
 	private final JobLauncher jobLauncher;
@@ -34,7 +36,7 @@ public class Application {
 	 * Batch Process Development Test
 	 */
 	
-	/*@Bean
+	@Bean
 	public ApplicationRunner runJobOnStartup() {
 		return args -> {
 			JobParameters jobParameters = new JobParametersBuilder()
@@ -48,5 +50,5 @@ public class Application {
 				log.error("Job 수행 실패 cause : {}", e.getMessage());
 			}
 		};
-	}*/
+	}
 }
