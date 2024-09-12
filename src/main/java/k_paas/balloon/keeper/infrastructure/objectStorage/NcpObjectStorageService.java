@@ -1,18 +1,18 @@
 package k_paas.balloon.keeper.infrastructure.objectStorage;
 
 import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import org.springframework.stereotype.Component;
@@ -30,10 +30,7 @@ public class NcpObjectStorageService {
     }
 
     public String putObject() {
-        // S3 client
-
         // create folder
-
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(0L);
         objectMetadata.setContentType("application/x-directory");
@@ -62,5 +59,36 @@ public class NcpObjectStorageService {
         }
 
         return objectName;
+    }
+
+    /**
+     * Test Download file Method
+     */
+    public void downloadObject() {
+
+        String objectName = "t.txt";
+        String downloadFilePath = "t.txt";
+        // download object
+        try {
+            S3Object s3Object = amazonS3Client.getObject(bucketName, objectName);
+            S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
+
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFilePath));
+            byte[] bytesArray = new byte[4096];
+            int bytesRead = -1;
+            while ((bytesRead = s3ObjectInputStream.read(bytesArray)) != -1) {
+                outputStream.write(bytesArray, 0, bytesRead);
+            }
+
+            outputStream.close();
+            s3ObjectInputStream.close();
+            System.out.format("Object %s has been downloaded.\n", objectName);
+        } catch (AmazonS3Exception e) {
+            e.printStackTrace();
+        } catch(SdkClientException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
