@@ -13,9 +13,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  data:
-    mongodb:
-      uri: mongodb://${MONGO_HOST}:${MONGO_PORT}/bkmongo
 
   batch:
     jdbc:

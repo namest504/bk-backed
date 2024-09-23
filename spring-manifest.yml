@@ -23,10 +23,6 @@ spec:
               value: "default-my-mysql-service-790b6-26292068-46a4f0920895.kr.lb.naverncp.com"
             - name: MYSQL_PORT
               value: "13006"
-            - name: MONGO_HOST
-              value: "default-mongodb-service-74809-26291546-cee6349096e3.kr.lb.naverncp.com"
-            - name: MONGO_PORT
-              value: "30017"
             - name: MYSQL_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -36,16 +32,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysql-secret
-                  key: password
-            - name: MONGO_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: username
-            - name: MONGO_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
                   key: password
       imagePullSecrets:
         - name: regcred
