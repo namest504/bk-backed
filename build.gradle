@@ -39,7 +39,6 @@ dependencies {
 
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	runtimeOnly 'com.mysql:mysql-connector-j:8.2.0'
 	runtimeOnly 'com.h2database:h2'
 }
