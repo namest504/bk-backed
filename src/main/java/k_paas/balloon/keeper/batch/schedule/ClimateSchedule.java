@@ -23,16 +23,16 @@ public class ClimateSchedule {
         this.climateJobConfig = climateJobConfig;
     }
 
-//    @Scheduled(cron = "0 10 */8 * * *")
-//    public void execute() {
-//        JobParameters jobParameters = new JobParametersBuilder()
-//                .addLong("time", System.currentTimeMillis())
-//                .toJobParameters();
-//
-//        try {
-//            jobLauncher.run(climateJobConfig.climateJob(), jobParameters);
-//        } catch (JobExecutionException e) {
-//            log.error("Job 수행 실패 cause : {}", e.getMessage());
-//        }
-//    }
+    @Scheduled(cron = "0 10 */8 * * *")
+    public void execute() {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .toJobParameters();
+
+        try {
+            jobLauncher.run(climateJobConfig.climateJob(), jobParameters);
+        } catch (JobExecutionException e) {
+            log.error("Job 수행 실패 cause : {}", e.getMessage());
+        }
+    }
 }
