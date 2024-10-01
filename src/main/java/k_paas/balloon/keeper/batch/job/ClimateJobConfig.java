@@ -1,5 +1,6 @@
 package k_paas.balloon.keeper.batch.job;
 
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -19,12 +20,17 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @EnableBatchProcessing
 @Configuration
 public class ClimateJobConfig {
+
+    private final static String API_URL = "http://default-my-simulation-se-e5042-26768252-5a90f913f7f8.kr.lb.naverncp.com:8001";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -35,14 +41,17 @@ public class ClimateJobConfig {
 
     private final ClimateDataJpaRepository climateDataJpaRepository;
 
+    private final RestTemplate restTemplate;
+
     public ClimateJobConfig(JobRepository jobRepository, PlatformTransactionManager transactionManager, NcpObjectStorageService ncpObjectStorageService, ClimateReader climateReader, ClimateWriter climateWriter,
-            ClimateDataJpaRepository climateDataJpaRepository) {
+            ClimateDataJpaRepository climateDataJpaRepository, RestTemplate restTemplate) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.ncpObjectStorageService = ncpObjectStorageService;
         this.climateReader = climateReader;
         this.climateWriter = climateWriter;
         this.climateDataJpaRepository = climateDataJpaRepository;
+        this.restTemplate = restTemplate;
     }
 
     @Bean
@@ -71,6 +80,7 @@ public class ClimateJobConfig {
                     log.info("S3에 업로드 시작");
                     String object = ncpObjectStorageService.putObject();
                     climateDataJpaRepository.save(new ClimateData(object));
+                    fetchObjectPath(object);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
@@ -85,5 +95,22 @@ public class ClimateJobConfig {
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
+    }
+
+    private void fetchObjectPath(String path) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
+                .path("/climate-data")
+                .queryParam("string", path)
+                .build()
+                .toUri();
+
+        ResponseEntity<String> response = restTemplate.getForEntity(uri.toString(), String.class);
+
+        // 응답 결과 출력
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("Succeed fetch Object path data");
+        } else {
+            log.error("Failed fetch");
+        }
     }
 }
