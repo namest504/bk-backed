@@ -100,7 +100,7 @@ public class ClimateJobConfig {
     private void fetchObjectPath(String path) {
         URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .path("/climate-data")
-                .queryParam("string", path)
+                .queryParam("object_name", path)
                 .build()
                 .toUri();
 
