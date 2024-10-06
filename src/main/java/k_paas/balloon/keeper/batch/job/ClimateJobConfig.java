@@ -103,7 +103,7 @@ public class ClimateJobConfig {
                 .queryParam("object_name", path)
                 .build()
                 .toUri();
-
+        log.info("request url: [{}]",uri);
         ResponseEntity<String> response = restTemplate.getForEntity(uri.toString(), String.class);
 
         // 응답 결과 출력

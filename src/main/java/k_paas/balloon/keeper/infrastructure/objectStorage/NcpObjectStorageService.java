@@ -46,7 +46,7 @@ public class NcpObjectStorageService {
         }
 
         // upload local file
-        String objectName = folderName + "/" + "climate_data_" + LocalTime.now(ZoneId.of("Asia/Seoul")) + ".csv";
+        String objectName = folderName + "climate_data_" + LocalTime.now(ZoneId.of("Asia/Seoul")) + ".csv";
         String filePath = "climate_data.csv";
 
         try {
