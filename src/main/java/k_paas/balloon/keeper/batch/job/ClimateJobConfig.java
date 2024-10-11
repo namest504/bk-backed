@@ -58,13 +58,11 @@ public class ClimateJobConfig {
     public Job climateJob() {
         return new JobBuilder("climateJob", jobRepository)
                 .start(climateStep())
-                .on("COMPLETED")
-                .to(uploadToObjectStep())
-                .from(uploadToObjectStep())
-                .on("*").to(deleteLocalObjectStep())
-                .end()
+                .next(uploadToObjectStep())
+                .next(deleteLocalObjectStep())
                 .build();
     }
+
 
     @Bean
     public Step climateStep() {
