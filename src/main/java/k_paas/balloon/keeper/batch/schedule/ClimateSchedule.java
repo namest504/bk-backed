@@ -23,7 +23,8 @@ public class ClimateSchedule {
         this.climateJobConfig = climateJobConfig;
     }
 
-    @Scheduled(cron = "0 10 */8 * * *")
+//    @Scheduled(cron = "0 10 */8 * * *")
+    @Scheduled(cron = "0 17 * * * *")
     public void execute() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())

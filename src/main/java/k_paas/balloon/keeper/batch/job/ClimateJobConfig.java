@@ -7,7 +7,6 @@ import java.util.List;
 import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import k_paas.balloon.keeper.batch.reader.ClimateReader;
 import k_paas.balloon.keeper.batch.writer.ClimateWriter;
-import k_paas.balloon.keeper.domain.climateData.ClimateData;
 import k_paas.balloon.keeper.domain.climateData.ClimateDataJpaRepository;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -84,8 +83,8 @@ public class ClimateJobConfig {
                     log.info("S3에 업로드 시작");
                     String object = ncpObjectStorageService.putObject();
                     log.info("업로드 경로 : {}", object);
-                    ClimateData save = climateDataJpaRepository.save(ClimateData.builder().filePath(object).build());
-                    log.info("저장 : [{} || {}]", save.getId(), save.getFilePath());
+//                    ClimateData save = climateDataJpaRepository.save(ClimateData.builder().filePath(object).build());
+//                    log.info("저장 : [{} || {}]", save.getId(), save.getFilePath());
                     fetchObjectPath(object);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
