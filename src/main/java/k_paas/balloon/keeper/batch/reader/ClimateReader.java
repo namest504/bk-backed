@@ -69,7 +69,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
             return null;
         }
 
-        log.info("Returning chunk with size: {}", chunk.size());
+//        log.info("Returning chunk with size: {}", chunk.size());
         return chunk;
     }
 
