@@ -24,7 +24,7 @@ public class ClimateSchedule {
     }
 
 //    @Scheduled(cron = "0 10 */8 * * *")
-    @Scheduled(cron = "0 */20 * * * *")
+    @Scheduled(cron = "0 */10 * * * *")
     public void execute() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
