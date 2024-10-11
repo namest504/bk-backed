@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class NcpObjectStorageService {
 
@@ -38,7 +40,7 @@ public class NcpObjectStorageService {
 
         try {
             amazonS3Client.putObject(putObjectRequest);
-            System.out.format("Folder %s has been created.\n", folderName);
+            System.out.format("Folder {} has been created.\n", folderName);
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
         } catch (SdkClientException e) {
@@ -51,7 +53,7 @@ public class NcpObjectStorageService {
 
         try {
             amazonS3Client.putObject(bucketName, objectName, new File(filePath));
-            System.out.format("Object %s has been created.\n", objectName);
+            log.info("Object %s has been created.", objectName);
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
         } catch (SdkClientException e) {

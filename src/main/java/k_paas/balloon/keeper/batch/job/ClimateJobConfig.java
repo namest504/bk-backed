@@ -78,9 +78,9 @@ public class ClimateJobConfig {
     public Step uploadToObjectStep() {
         return new StepBuilder("uploadToS3Step", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    log.info("S3에 업로드 시작");
+//                    log.info("S3에 업로드 시작");
                     String object = ncpObjectStorageService.putObject();
-                    log.info("업로드 경로 : {}", object);
+//                    log.info("업로드 경로 : {}", object);
 //                    ClimateData save = climateDataJpaRepository.save(ClimateData.builder().filePath(object).build());
 //                    log.info("저장 : [{} || {}]", save.getId(), save.getFilePath());
                     fetchObjectPath(object);
@@ -93,8 +93,13 @@ public class ClimateJobConfig {
     public Step deleteLocalObjectStep() {
         return new StepBuilder("deleteLocalObjectStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    log.info("Local Data 삭제");
-                    Files.delete(Path.of("climate_data.csv"));
+                    Path filePath = Path.of("climate_data.csv");
+                    if (Files.exists(filePath)) {
+                        Files.delete(filePath);
+                        log.info("File {} has been successfully deleted.", filePath);
+                    } else {
+                        log.warn("File {} does not exist, skipping deletion.", filePath);
+                    }
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();

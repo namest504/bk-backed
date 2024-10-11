@@ -3,7 +3,6 @@ package k_paas.balloon.keeper.batch.writer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>>
 
     @Override
     public void write(Chunk<? extends List<UpdateClimateServiceSpec>> climates) {
-        log.info("climates.size() : {}", climates.size());
+//        log.info("climates.size() : {}", climates.size());
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_FILE_PATH, true))) {
             for (List<UpdateClimateServiceSpec> climateData : climates) {

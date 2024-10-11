@@ -3,9 +3,7 @@ package k_paas.balloon.keeper.batch.reader;
 import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_X_INDEX;
 import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_Y_INDEX;
 import static k_paas.balloon.keeper.global.constant.ClimateContants.ISOBARIC_ALTITUDE;
-import static k_paas.balloon.keeper.global.constant.ClimateContants.MAX_PREDICT_HOUR;
 
-import jakarta.persistence.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,7 +43,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
                     isCompleted = true;
                     break;
                 }
-                log.info("Processing altitude: {}, predict hour: {}", ISOBARIC_ALTITUDE[currentAltitudeIndex], 0);
+//                log.info("Processing altitude: {}, predict hour: {}", ISOBARIC_ALTITUDE[currentAltitudeIndex], 0);
                 buffer = processClimateData(currentAltitudeIndex, 0);
 
                 currentAltitudeIndex++;
@@ -61,7 +59,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
             return null;
         }
 
-        log.info("Returning chunk with size: {}", chunk.size());
+//        log.info("Returning chunk with size: {}", chunk.size());
         return chunk;
     }
 
