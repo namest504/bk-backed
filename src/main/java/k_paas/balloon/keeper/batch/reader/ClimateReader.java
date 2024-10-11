@@ -10,12 +10,15 @@ import java.util.concurrent.CompletableFuture;
 import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import k_paas.balloon.keeper.batch.service.ClimateAsyncService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>> {
+public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>, StepExecutionListener {
 
     private int currentAltitudeIndex = 0;
     private static final int CHUNK_SIZE = 100;
@@ -29,6 +32,15 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
     }
 
     @Override
+    public void beforeStep(StepExecution stepExecution) {
+        // Job이 새로 시작할 때 currentAltitudeIndex 초기화
+        this.currentAltitudeIndex = 0;
+        this.isCompleted = false;
+        this.buffer.clear();
+        log.info("ClimateReader initialized with currentAltitudeIndex: {}", currentAltitudeIndex);
+    }
+
+    @Override
     public List<UpdateClimateServiceSpec> read() {
         if (isCompleted) {
             return null;
@@ -38,12 +50,10 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
 
         while (chunk.size() < CHUNK_SIZE && !isCompleted) {
             if (buffer.isEmpty()) {
-//                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
-                if (currentAltitudeIndex >= 1) {
+                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
                     isCompleted = true;
                     break;
                 }
-//                log.info("Processing altitude: {}, predict hour: {}", ISOBARIC_ALTITUDE[currentAltitudeIndex], 0);
                 buffer = processClimateData(currentAltitudeIndex, 0);
 
                 currentAltitudeIndex++;
@@ -59,7 +69,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
             return null;
         }
 
-//        log.info("Returning chunk with size: {}", chunk.size());
+        log.info("Returning chunk with size: {}", chunk.size());
         return chunk;
     }
 
@@ -105,5 +115,11 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
                 .uVector(uVectorArray[y][x])
                 .vVector(vVectorArray[y][x])
                 .build();
+    }
+
+    @Override
+    public ExitStatus afterStep(StepExecution stepExecution) {
+        // 이후 처리가 필요할 경우 여기서 추가 가능
+        return ExitStatus.COMPLETED;
     }
 }

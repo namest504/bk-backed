@@ -1,8 +1,12 @@
 package k_paas.balloon.keeper.batch.job;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import k_paas.balloon.keeper.batch.reader.ClimateReader;
@@ -58,19 +62,46 @@ public class ClimateJobConfig {
     public Job climateJob() {
         return new JobBuilder("climateJob", jobRepository)
                 .start(climateStep())
+                .next(processClimateDataStep())
                 .next(uploadToObjectStep())
                 .next(deleteLocalObjectStep())
+                .build();
+    }
+
+    @Bean
+    public Step processClimateDataStep() {
+        return new StepBuilder("processClimateDataStep", jobRepository)
+                .<List<UpdateClimateServiceSpec>, List<UpdateClimateServiceSpec>>chunk(10, transactionManager)
+                .reader(climateReader)
+                .writer(climateWriter)
                 .build();
     }
 
 
     @Bean
     public Step climateStep() {
-        log.info("climateStep start");
         return new StepBuilder("climateStep", jobRepository)
-                .<List<UpdateClimateServiceSpec>, List<UpdateClimateServiceSpec>>chunk(10, transactionManager)
-                .reader(climateReader)
-                .writer(climateWriter)
+                .tasklet((contribution, chunkContext) -> {
+                    String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                    String csvFileName = String.format("./climate_data_%s.csv", timestamp);
+
+                    chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("csvFileName", csvFileName);
+
+                    File file = new File(csvFileName);
+                    boolean isNewFile;
+                    if (!file.exists()) {
+                        try {
+                            isNewFile = file.createNewFile();
+                            if (isNewFile) {
+                                log.info("New file created: {}", csvFileName);
+                            }
+                        } catch (IOException e) {
+                            log.error("Error creating new file: {}", csvFileName, e);
+                        }
+                    }
+
+                    return RepeatStatus.FINISHED;
+                }, transactionManager)
                 .build();
     }
 
@@ -78,11 +109,10 @@ public class ClimateJobConfig {
     public Step uploadToObjectStep() {
         return new StepBuilder("uploadToS3Step", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-//                    log.info("S3에 업로드 시작");
-                    String object = ncpObjectStorageService.putObject();
-//                    log.info("업로드 경로 : {}", object);
-//                    ClimateData save = climateDataJpaRepository.save(ClimateData.builder().filePath(object).build());
-//                    log.info("저장 : [{} || {}]", save.getId(), save.getFilePath());
+                    String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
+
+                    String object = ncpObjectStorageService.putObject(fileName);
+
                     fetchObjectPath(object);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
@@ -93,7 +123,9 @@ public class ClimateJobConfig {
     public Step deleteLocalObjectStep() {
         return new StepBuilder("deleteLocalObjectStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    Path filePath = Path.of("climate_data.csv");
+                    String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
+
+                    Path filePath = Path.of(fileName);
                     if (Files.exists(filePath)) {
                         Files.delete(filePath);
                         log.info("File {} has been successfully deleted.", filePath);
