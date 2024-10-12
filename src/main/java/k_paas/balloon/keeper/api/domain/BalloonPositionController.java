@@ -18,8 +18,9 @@ public class BalloonPositionController {
     private final BalloonPositionService balloonPositionService;
     private final RestTemplate restTemplate;
 
-    public BalloonPositionController(BalloonPositionService balloonPositionService) {
+    public BalloonPositionController(BalloonPositionService balloonPositionService, RestTemplate restTemplate) {
         this.balloonPositionService = balloonPositionService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping("/balloons")
