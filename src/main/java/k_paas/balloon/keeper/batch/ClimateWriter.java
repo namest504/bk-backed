@@ -1,10 +1,9 @@
-package k_paas.balloon.keeper.batch.writer;
+package k_paas.balloon.keeper.batch;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>>, StepExecutionListener {
 
     private String csvFilePath;
-
 
     @Override
     public void beforeStep(StepExecution stepExecution) {

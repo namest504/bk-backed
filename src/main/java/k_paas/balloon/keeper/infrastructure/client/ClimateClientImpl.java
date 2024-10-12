@@ -26,7 +26,7 @@ public class ClimateClientImpl implements ClimateClient {
         this.restTemplate = restTemplate;
     }
 
-    public String[][] sendRequestClimateData(String varn, String level, String predictHour) {
+    public String[][] fetchGetClimateData(String varn, String level, String predictHour) {
         StringBuilder urlBuilder = new StringBuilder("https://apihub.kma.go.kr/api/typ06/cgi-bin/url/nph-um_grib_xy_txt1");
         urlBuilder.append("?" + URLEncoder.encode("group", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("UMKR", StandardCharsets.UTF_8)); /* 모델 구분(한반도 모델 -> 1.5km) */
         urlBuilder.append("&" + URLEncoder.encode("nwp", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("N512", StandardCharsets.UTF_8)); /* 모델기반 종류 (여기선 상관x) */

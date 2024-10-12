@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.global.config;
+package k_paas.balloon.keeper.global.async;
 
 import java.util.concurrent.Executor;
 import org.springframework.context.annotation.Bean;

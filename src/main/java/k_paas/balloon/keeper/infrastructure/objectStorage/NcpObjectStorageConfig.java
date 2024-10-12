@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.global.config;
+package k_paas.balloon.keeper.infrastructure.objectStorage;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

@@ -1,6 +1,5 @@
-package k_paas.balloon.keeper.batch.schedule;
+package k_paas.balloon.keeper.batch;
 
-import k_paas.balloon.keeper.batch.job.ClimateJobConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecutionException;
 import org.springframework.batch.core.JobParameters;
@@ -23,6 +22,9 @@ public class ClimateSchedule {
         this.climateJobConfig = climateJobConfig;
     }
 
+    /**
+     * 매 8시 16시 00시 10분에 작업을 수행
+     */
     @Scheduled(cron = "0 10 */8 * * *")
     public void execute() {
         JobParameters jobParameters = new JobParametersBuilder()

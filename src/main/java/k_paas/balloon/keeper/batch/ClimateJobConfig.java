@@ -1,17 +1,13 @@
-package k_paas.balloon.keeper.batch.job;
+package k_paas.balloon.keeper.batch;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import k_paas.balloon.keeper.batch.dto.UpdateClimateServiceSpec;
-import k_paas.balloon.keeper.batch.reader.ClimateReader;
-import k_paas.balloon.keeper.batch.writer.ClimateWriter;
-import k_paas.balloon.keeper.domain.climateData.ClimateDataJpaRepository;
+import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -19,43 +15,39 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @EnableBatchProcessing
 @Configuration
 public class ClimateJobConfig {
 
-    private final static String API_URL = "http://" + "default-my-simulation-se-e5042-26768252-5a90f913f7f8.kr.lb.naverncp.com" + ":8001";
-
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final NcpObjectStorageService ncpObjectStorageService;
+    private final SimulationClient simulationClient;
 
     private final ClimateReader climateReader;
     private final ClimateWriter climateWriter;
 
-    private final ClimateDataJpaRepository climateDataJpaRepository;
-
-    private final RestTemplate restTemplate;
-
-    public ClimateJobConfig(JobRepository jobRepository, PlatformTransactionManager transactionManager, NcpObjectStorageService ncpObjectStorageService, ClimateReader climateReader,
-            ClimateWriter climateWriter,
-            ClimateDataJpaRepository climateDataJpaRepository, RestTemplate restTemplate) {
+    public ClimateJobConfig(
+            JobRepository jobRepository,
+            PlatformTransactionManager transactionManager,
+            NcpObjectStorageService ncpObjectStorageService,
+            SimulationClient simulationClient,
+            ClimateReader climateReader,
+            ClimateWriter climateWriter) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.ncpObjectStorageService = ncpObjectStorageService;
+        this.simulationClient = simulationClient;
         this.climateReader = climateReader;
         this.climateWriter = climateWriter;
-        this.climateDataJpaRepository = climateDataJpaRepository;
-        this.restTemplate = restTemplate;
     }
 
     @Bean
@@ -84,22 +76,8 @@ public class ClimateJobConfig {
                 .tasklet((contribution, chunkContext) -> {
                     String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
                     String csvFileName = String.format("./climate_data_%s.csv", timestamp);
-
                     chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("csvFileName", csvFileName);
-
-                    File file = new File(csvFileName);
-                    boolean isNewFile;
-                    if (!file.exists()) {
-                        try {
-                            isNewFile = file.createNewFile();
-                            if (isNewFile) {
-                                log.info("New file created: {}", csvFileName);
-                            }
-                        } catch (IOException e) {
-                            log.error("Error creating new file: {}", csvFileName, e);
-                        }
-                    }
-
+                    existFileInLocal(csvFileName);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
@@ -109,11 +87,7 @@ public class ClimateJobConfig {
     public Step uploadToObjectStep() {
         return new StepBuilder("uploadToS3Step", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
-
-                    String object = ncpObjectStorageService.putObject(fileName);
-
-                    fetchObjectPath(object);
+                    uploadProcess(chunkContext);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
@@ -123,34 +97,49 @@ public class ClimateJobConfig {
     public Step deleteLocalObjectStep() {
         return new StepBuilder("deleteLocalObjectStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
-
-                    Path filePath = Path.of(fileName);
-                    if (Files.exists(filePath)) {
-                        Files.delete(filePath);
-                        log.info("File {} has been successfully deleted.", filePath);
-                    } else {
-                        log.warn("File {} does not exist, skipping deletion.", filePath);
-                    }
+                    deleteLocalFile(chunkContext);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
     }
 
-    private void fetchObjectPath(String path) {
-        URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .path("/climate-data")
-                .queryParam("object_name", path)
-                .build()
-                .toUri();
-        log.info("request url: [{}]", uri);
-        ResponseEntity<String> response = restTemplate.getForEntity(uri.toString(), String.class);
 
-        // 응답 결과 출력
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("Succeed fetch Object path data");
+    private void existFileInLocal(String csvFileName) {
+        File file = new File(csvFileName);
+        boolean isNewFile;
+        if (!file.exists()) {
+            try {
+                isNewFile = file.createNewFile();
+                if (isNewFile) {
+                    log.info("New file created: {}", csvFileName);
+                }
+            } catch (IOException e) {
+                log.error("Error creating new file: {}", csvFileName, e);
+            }
+        }
+    }
+
+    private void uploadProcess(ChunkContext chunkContext) {
+        String object = putObjectInNCPObjectStorage(chunkContext);
+        simulationClient.fetchObjectPath(object);
+    }
+
+    private String putObjectInNCPObjectStorage(ChunkContext chunkContext) {
+        String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
+
+        String object = ncpObjectStorageService.putObject(fileName);
+        return object;
+    }
+
+    private void deleteLocalFile(ChunkContext chunkContext) throws IOException {
+        String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
+
+        Path filePath = Path.of(fileName);
+        if (Files.exists(filePath)) {
+            Files.delete(filePath);
+            log.info("File {} has been successfully deleted.", filePath);
         } else {
-            log.error("Failed fetch");
+            log.warn("File {} does not exist, skipping deletion.", filePath);
         }
     }
 }

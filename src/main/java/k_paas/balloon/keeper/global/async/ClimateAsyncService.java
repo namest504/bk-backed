@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.batch.service;
+package k_paas.balloon.keeper.global.async;
 
 import java.util.concurrent.CompletableFuture;
 import k_paas.balloon.keeper.infrastructure.client.ClimateClient;
@@ -18,6 +18,6 @@ public class ClimateAsyncService {
 
     @Async("threadPoolTaskExecutor")
     public CompletableFuture<String[][]> sendRequest(String varn, String level, String predictHour) {
-        return CompletableFuture.completedFuture(climateClient.sendRequestClimateData(varn, level, predictHour));
+        return CompletableFuture.completedFuture(climateClient.fetchGetClimateData(varn, level, predictHour));
     }
 }
