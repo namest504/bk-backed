@@ -45,3 +45,17 @@ spec:
                   key: ncp-secret-key
       imagePullSecrets:
         - name: regcred
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-server-lb
+spec:
+  selector:
+    app: my-server
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
