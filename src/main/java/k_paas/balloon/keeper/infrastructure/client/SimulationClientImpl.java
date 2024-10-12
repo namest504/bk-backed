@@ -11,7 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class SimulationClientImpl implements SimulationClient{
 
-    private final static String API_URL = "http://" + "default-my-simulation-se-e5042-26768252-5a90f913f7f8.kr.lb.naverncp.com" + ":8001";
+    private final static String API_URL = "http://my-simulation-server-service:8001";
     private final RestTemplate restTemplate;
 
     public SimulationClientImpl(RestTemplate restTemplate) {
