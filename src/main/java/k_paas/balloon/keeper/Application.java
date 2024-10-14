@@ -2,6 +2,7 @@ package k_paas.balloon.keeper;
 
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 import k_paas.balloon.keeper.batch.ClimateJobConfig;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
@@ -38,12 +39,13 @@ public class Application {
     @PostConstruct
     public void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        log.info("The server time is set in Asia/Seoul");
     }
 
     @Bean
     public ApplicationRunner run() {
         return args -> {
-            log.info("The server time is {}", LocalDateTime.now());
+            log.info("The server time is {}", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
         };
     }
 
