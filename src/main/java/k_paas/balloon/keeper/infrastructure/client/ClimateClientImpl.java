@@ -49,9 +49,7 @@ public class ClimateClientImpl implements ClimateClient {
                 entity,
                 String.class);
 
-        String responseBody = response.getBody();
-        String[][] result = this.parseResponseBody(responseBody);
-        return result;
+        return parseResponseBody(response.getBody());
     }
 
     // TODO: 요청 데이터 가공 비효율적인 부분 수정 필요
