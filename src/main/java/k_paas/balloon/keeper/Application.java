@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 import k_paas.balloon.keeper.batch.ClimateJobConfig;
-import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
+import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.ApplicationRunner;

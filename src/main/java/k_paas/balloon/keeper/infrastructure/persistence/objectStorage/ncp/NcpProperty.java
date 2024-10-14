@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.infrastructure.objectStorage;
+package k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

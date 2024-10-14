@@ -1,5 +1,8 @@
 package k_paas.balloon.keeper.batch;
 
+import static k_paas.balloon.keeper.batch.BatchContextUtil.addContextData;
+import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentCsvFileName;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,7 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
-import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
+import k_paas.balloon.keeper.infrastructure.persistence.memory.ClimateDataInMemoryStore;
+import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,30 +30,17 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @EnableBatchProcessing
 @Configuration
+@RequiredArgsConstructor
 public class ClimateJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final NcpObjectStorageService ncpObjectStorageService;
     private final SimulationClient simulationClient;
+    private final ClimateDataInMemoryStore climateDataInMemoryStore;
 
     private final ClimateReader climateReader;
     private final ClimateWriter climateWriter;
-
-    public ClimateJobConfig(
-            JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
-            NcpObjectStorageService ncpObjectStorageService,
-            SimulationClient simulationClient,
-            ClimateReader climateReader,
-            ClimateWriter climateWriter) {
-        this.jobRepository = jobRepository;
-        this.transactionManager = transactionManager;
-        this.ncpObjectStorageService = ncpObjectStorageService;
-        this.simulationClient = simulationClient;
-        this.climateReader = climateReader;
-        this.climateWriter = climateWriter;
-    }
 
     @Bean
     public Job climateJob() {
@@ -75,10 +67,10 @@ public class ClimateJobConfig {
         return new StepBuilder("climateStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     String timestamp = new SimpleDateFormat("yyyyMMddHH").format(new Date());
-                    chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("timestamp", timestamp);
+                    addContextData(chunkContext, "timestamp", timestamp);
 
                     String csvFileName = String.format("./climate_data_%s.csv", timestamp);
-                    chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("csvFileName", csvFileName);
+                    addContextData(chunkContext, "csvFileName", csvFileName);
                     existFileInLocal(csvFileName);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
@@ -123,18 +115,18 @@ public class ClimateJobConfig {
 
     private void uploadProcess(ChunkContext chunkContext) {
         String object = putObjectInNCPObjectStorage(chunkContext);
-        simulationClient.fetchObjectPath(object);
+//        simulationClient.fetchObjectPath(object);
+        climateDataInMemoryStore.put("recent-path", object);
     }
 
     private String putObjectInNCPObjectStorage(ChunkContext chunkContext) {
-        String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
-
+        String fileName = getCurrentCsvFileName(chunkContext);
         String object = ncpObjectStorageService.putObject(fileName);
         return object;
     }
 
     private void deleteLocalFile(ChunkContext chunkContext) throws IOException {
-        String fileName = (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
+        String fileName = getCurrentCsvFileName(chunkContext);
 
         Path filePath = Path.of(fileName);
         if (Files.exists(filePath)) {

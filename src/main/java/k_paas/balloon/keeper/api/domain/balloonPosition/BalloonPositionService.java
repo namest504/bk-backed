@@ -1,6 +1,7 @@
 package k_paas.balloon.keeper.api.domain.balloonPosition;
 
 import java.util.List;
+import k_paas.balloon.keeper.infrastructure.persistence.database.BalloonPositionRepository;
 import org.springframework.stereotype.Service;
 
 @Service

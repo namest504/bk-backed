@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.infrastructure.objectStorage;
+package k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
