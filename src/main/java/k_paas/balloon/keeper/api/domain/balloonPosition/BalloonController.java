@@ -35,14 +35,15 @@ public class BalloonController {
 
     @GetMapping("/comments")
     public ResponseEntity<Page<BalloonComment>> getPagedComments(
-            @ModelAttribute PageableRequest pageableRequest) {
-        Pageable pageable = pageableRequest.toPageable();
+            @ModelAttribute @Valid PageableRequest pageableRequest) {
+        Pageable pageable = pageableRequest.toPageable("createdAt");
         Page<BalloonComment> pagedComments = balloonService.getPagedComments(pageable);
         return ResponseEntity.ok(pagedComments);
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<Void> createComment(@RequestBody @Valid BalloonCommentRequest request) {
+    public ResponseEntity<Void> createComment(
+            @RequestBody @Valid BalloonCommentRequest request) {
         balloonService.createComment(request);
         return ResponseEntity.status(NO_CONTENT)
                 .build();
