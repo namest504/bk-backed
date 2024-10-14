@@ -10,11 +10,11 @@ import org.springframework.data.domain.Sort.Direction;
 public record PageableRequest(
         @Min(1)
         @DefaultValue("1")
-        int page,
+        Integer page,
 
         @Min(1)
         @DefaultValue("10")
-        int size,
+        Integer size,
 
         @DefaultValue("id")
         String sortBy,
