@@ -28,4 +28,10 @@ public class BalloonPositionController {
         return ResponseEntity.status(OK)
                 .body(result);
     }
+
+    @GetMapping("/climate/data-path")
+    public ResponseEntity<String> getResentBatchedCsvPath() {
+        return ResponseEntity.status(OK)
+                .body("done");
+    }
 }
