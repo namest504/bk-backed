@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.domain;
+package k_paas.balloon.keeper.api.domain.balloonPosition;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.domain;
+package k_paas.balloon.keeper.api.domain.balloonPosition;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
