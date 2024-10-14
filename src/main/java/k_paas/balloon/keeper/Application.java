@@ -1,14 +1,17 @@
 package k_paas.balloon.keeper;
 
 import jakarta.annotation.PostConstruct;
+import java.time.LocalDateTime;
 import java.util.TimeZone;
 import k_paas.balloon.keeper.batch.ClimateJobConfig;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 
 @Slf4j
 @SpringBootApplication
@@ -25,14 +28,23 @@ public class Application {
         this.ncpObjectStorageService = ncpObjectStorageService;
     }
 
+
+
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
     @PostConstruct
     public void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 
-
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+    @Bean
+    public ApplicationRunner run() {
+        return args -> {
+            log.info("The server time is {}", LocalDateTime.now());
+        };
     }
 
     /**
