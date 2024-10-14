@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.global.constant;
+package k_paas.balloon.keeper.batch;
 
 public class ClimateContants {
 

@@ -1,8 +1,8 @@
 package k_paas.balloon.keeper.batch;
 
-import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_X_INDEX;
-import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_Y_INDEX;
-import static k_paas.balloon.keeper.global.constant.ClimateContants.ISOBARIC_ALTITUDE;
+import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_X_INDEX;
+import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_Y_INDEX;
+import static k_paas.balloon.keeper.batch.ClimateContants.ISOBARIC_ALTITUDE;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package k_paas.balloon.keeper.infrastructure.client;
 
-import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_X_INDEX;
-import static k_paas.balloon.keeper.global.constant.ClimateContants.ARRAY_Y_INDEX;
+import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_X_INDEX;
+import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_Y_INDEX;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
