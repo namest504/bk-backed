@@ -2,7 +2,7 @@ package k_paas.balloon.keeper.api.domain.climateData;
 
 import static org.springframework.http.HttpStatus.OK;
 
-import k_paas.balloon.keeper.global.config.ApiKeyProperty;
+import k_paas.balloon.keeper.global.property.ApiKeyProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

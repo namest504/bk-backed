@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.global.config;
+package k_paas.balloon.keeper.global.property;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
