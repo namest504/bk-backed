@@ -1,7 +1,5 @@
 package k_paas.balloon.keeper.batch;
 
-import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentCsvFileName;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,7 +22,7 @@ public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>>
 
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        this.csvFilePath = getCurrentCsvFileName(stepExecution);
+        this.csvFilePath = BatchContextUtil.getCurrentBatchContext(stepExecution, "csvFileName");
     }
 
     @Override

@@ -5,12 +5,12 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 
 public class BatchContextUtil {
 
-    public static String getCurrentCsvFileName(ChunkContext chunkContext) {
-        return (String) chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().get("csvFileName");
+    public static String getCurrentBatchContext(ChunkContext chunkContext, String value) {
+        return getCurrentBatchContext(chunkContext.getStepContext().getStepExecution(), value);
     }
 
-    public static String getCurrentCsvFileName(StepExecution stepExecution) {
-        return (String) stepExecution.getJobExecution().getExecutionContext().get("csvFileName");
+    public static String getCurrentBatchContext(StepExecution stepExecution, String value) {
+        return (String) stepExecution.getJobExecution().getExecutionContext().get(value);
     }
 
     public static void addContextData(ChunkContext chunkContext, String timestamp, String timestamp1) {

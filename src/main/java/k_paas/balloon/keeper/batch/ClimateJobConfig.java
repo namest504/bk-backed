@@ -1,7 +1,7 @@
 package k_paas.balloon.keeper.batch;
 
 import static k_paas.balloon.keeper.batch.BatchContextUtil.addContextData;
-import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentCsvFileName;
+import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentBatchContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -120,13 +120,13 @@ public class ClimateJobConfig {
     }
 
     private String putObjectInNCPObjectStorage(ChunkContext chunkContext) {
-        String fileName = getCurrentCsvFileName(chunkContext);
+        String fileName = getCurrentBatchContext(chunkContext, "csvFileName");
         String object = ncpObjectStorageService.putObject(fileName);
         return object;
     }
 
     private void deleteLocalFile(ChunkContext chunkContext) throws IOException {
-        String fileName = getCurrentCsvFileName(chunkContext);
+        String fileName = getCurrentBatchContext(chunkContext, "csvFileName");
 
         Path filePath = Path.of(fileName);
         if (Files.exists(filePath)) {
