@@ -26,7 +26,7 @@ public class ClimateClientImpl implements ClimateClient {
         this.restTemplate = restTemplate;
     }
 
-    public String[][] fetchGetClimateData(String varn, String level, String predictHour) {
+    public String[][] fetchGetClimateData(String varn, String level, String predictHour, String timeStamp) {
         StringBuilder urlBuilder = new StringBuilder("https://apihub.kma.go.kr/api/typ06/cgi-bin/url/nph-um_grib_xy_txt1");
         urlBuilder.append("?" + URLEncoder.encode("group", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("UMKR", StandardCharsets.UTF_8)); /* 모델 구분(한반도 모델 -> 1.5km) */
         urlBuilder.append("&" + URLEncoder.encode("nwp", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("N512", StandardCharsets.UTF_8)); /* 모델기반 종류 (여기선 상관x) */
@@ -34,7 +34,7 @@ public class ClimateClientImpl implements ClimateClient {
         urlBuilder.append("&" + URLEncoder.encode("varn", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(varn, StandardCharsets.UTF_8)); /* 변수 종류 (grib 파일 참고) U, V 벡터를 위한 변수 */
         urlBuilder.append("&" + URLEncoder.encode("level", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(level, StandardCharsets.UTF_8)); /* 고도 특정 고도만 출력 가능 (grib 파일 참고) */
         urlBuilder.append("&" + URLEncoder.encode("map", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("F", StandardCharsets.UTF_8)); /* 사용 영역 (F -> 자료 전체 영역) */
-        urlBuilder.append("&" + URLEncoder.encode("tmfc", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("2024070900", StandardCharsets.UTF_8)); /* 분석 시간 */
+        urlBuilder.append("&" + URLEncoder.encode("tmfc", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(timeStamp, StandardCharsets.UTF_8)); /* 분석 시간 */
         urlBuilder.append("&" + URLEncoder.encode("hf", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(predictHour, StandardCharsets.UTF_8)); /* 예측 시간 (+00 hour)*/
         urlBuilder.append("&" + URLEncoder.encode("authKey", StandardCharsets.UTF_8) + "=" + URLEncoder.encode("KolWTlbHQaqJVk5WxwGqnw", StandardCharsets.UTF_8)); /* 발급된 API 인증키 */
 

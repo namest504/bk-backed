@@ -22,6 +22,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
     private int currentAltitudeIndex = 0;
     private static final int CHUNK_SIZE = 100;
     private boolean isCompleted = false;
+    private String timestamp;
     private List<UpdateClimateServiceSpec> buffer = new ArrayList<>();
 
     private final ClimateAsyncService climateAsyncService;
@@ -36,7 +37,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      */
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        this.currentAltitudeIndex = 0;
+        this.timestamp = (String) stepExecution.getJobExecution().getExecutionContext().get("timestamp");
         this.isCompleted = false;
         this.buffer.clear();
         log.info("ClimateReader initialized with currentAltitudeIndex: {}", currentAltitudeIndex);
@@ -53,12 +54,11 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
 
         while (chunk.size() < CHUNK_SIZE && !isCompleted) {
             if (buffer.isEmpty()) {
-//                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
-                if (currentAltitudeIndex >= 1) {
+                if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
                     isCompleted = true;
                     break;
                 }
-                buffer = processClimateData(currentAltitudeIndex, 0);
+                buffer = processClimateData(currentAltitudeIndex, 0, timestamp);
 
                 currentAltitudeIndex++;
             }
@@ -81,11 +81,12 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * U벡터와 V벡터에 대한 값을 각각 비동기로 수행 후 통합을 수행
      * @param altitude 고도
      * @param predictHour 현재로 부터 예측 시간 (요구 사항 변경으로 인한 0 현재값으로 고정)
+     * @param timeStamp
      * @return
      */
-    private List<UpdateClimateServiceSpec> processClimateData(int altitude, int predictHour) {
-        CompletableFuture<String[][]> completableUVectors = sendClimateRequest(2002, altitude, predictHour);
-        CompletableFuture<String[][]> completableVVectors = sendClimateRequest(2003, altitude, predictHour);
+    private List<UpdateClimateServiceSpec> processClimateData(int altitude, int predictHour, String timeStamp) {
+        CompletableFuture<String[][]> completableUVectors = sendClimateRequest(2002, altitude, predictHour, timeStamp);
+        CompletableFuture<String[][]> completableVVectors = sendClimateRequest(2003, altitude, predictHour, timeStamp);
 
         List<UpdateClimateServiceSpec> result = CompletableFuture.allOf(completableUVectors, completableVVectors)
                 .thenApply(r -> {
@@ -102,13 +103,15 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param parameterIndex
      * @param altitude
      * @param predictHour
+     * @param timeStamp
      * @return
      */
-    private CompletableFuture<String[][]> sendClimateRequest(int parameterIndex, int altitude, int predictHour) {
+    private CompletableFuture<String[][]> sendClimateRequest(int parameterIndex, int altitude, int predictHour, String timeStamp) {
         return climateAsyncService.sendRequest(
                 String.valueOf(parameterIndex),
                 String.valueOf(ISOBARIC_ALTITUDE[altitude]),
-                String.valueOf(predictHour)
+                String.valueOf(predictHour),
+                timeStamp
         );
     }
 

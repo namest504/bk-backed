@@ -17,7 +17,7 @@ public class ClimateAsyncService {
     }
 
     @Async("threadPoolTaskExecutor")
-    public CompletableFuture<String[][]> sendRequest(String varn, String level, String predictHour) {
-        return CompletableFuture.completedFuture(climateClient.fetchGetClimateData(varn, level, predictHour));
+    public CompletableFuture<String[][]> sendRequest(String varn, String level, String predictHour, String timeStamp) {
+        return CompletableFuture.completedFuture(climateClient.fetchGetClimateData(varn, level, predictHour, timeStamp));
     }
 }
