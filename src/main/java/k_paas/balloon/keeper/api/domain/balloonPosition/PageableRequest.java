@@ -18,7 +18,7 @@ public record PageableRequest(
         @DefaultValue("id")
         String sortBy,
 
-        @DefaultValue("desc")
+        @DefaultValue("DESC")
         String sortDirection
 ) {
     public Pageable toPageable() {
