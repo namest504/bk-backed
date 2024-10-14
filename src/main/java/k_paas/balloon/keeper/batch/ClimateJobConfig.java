@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +74,6 @@ public class ClimateJobConfig {
     public Step climateStep() {
         return new StepBuilder("climateStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
                     String timestamp = new SimpleDateFormat("yyyyMMddHH").format(new Date());
                     chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext().put("timestamp", timestamp);
 

@@ -1,5 +1,7 @@
 package k_paas.balloon.keeper;
 
+import jakarta.annotation.PostConstruct;
+import java.util.TimeZone;
 import k_paas.balloon.keeper.batch.ClimateJobConfig;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,12 @@ public class Application {
         this.climateJobConfig = climateJobConfig;
         this.ncpObjectStorageService = ncpObjectStorageService;
     }
+
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
+
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
