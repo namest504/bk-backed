@@ -1,7 +1,9 @@
 package k_paas.balloon.keeper;
 
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 import k_paas.balloon.keeper.batch.ClimateJobConfig;
 import k_paas.balloon.keeper.infrastructure.objectStorage.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -33,12 +35,12 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-//
-//    @PostConstruct
-//    public void init() {
-//        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-//        log.info("The server time is set in Asia/Seoul");
-//    }
+
+    @PostConstruct
+    public void init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+        log.info("The server time is set in Asia/Seoul");
+    }
 
     @Bean
     public ApplicationRunner run() {

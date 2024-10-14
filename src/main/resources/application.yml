@@ -21,3 +21,8 @@ spring:
 ncp:
   accessKey: ${NCP_ACCESSKEY}
   secretKey: ${NCP_SECRETKEY}
+
+logging:
+  pattern:
+    datetime: yyyy-MM-dd HH:mm:ss.SSS
+  time-zone: Asia/Seoul
