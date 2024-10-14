@@ -45,7 +45,7 @@ public class Application {
     @Bean
     public ApplicationRunner run() {
         return args -> {
-            log.info("The server time is {}", LocalDateTime.now().format(DateTimeFormatter.ISO_DATE));
+            log.info("The server time is {}", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         };
     }
 
