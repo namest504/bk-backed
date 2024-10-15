@@ -1,5 +1,6 @@
 package k_paas.balloon.keeper.api.domain.climateData;
 
+import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.persistence.memory.ClimateDataInMemoryStore;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ public class ClimateDataService {
 
     private final ClimateDataInMemoryStore climateDataInMemoryStore;
     private final NcpObjectStorageService ncpObjectStorageService;
+    private final SimulationClient simulationClient;
 
     public ClimateDataPathResponse getRecentCsvFilePath() {
         String recentPath = climateDataInMemoryStore.get(ClimateDataInMemoryStore.RECENT_PATH);
@@ -26,5 +28,9 @@ public class ClimateDataService {
         }
 
         return ClimateDataPathResponse.from(recentPath);
+    }
+
+    public void initLearning() {
+        simulationClient.initiateLearningProcess();
     }
 }

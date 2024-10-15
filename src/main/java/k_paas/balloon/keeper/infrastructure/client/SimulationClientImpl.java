@@ -18,10 +18,27 @@ public class SimulationClientImpl implements SimulationClient{
         this.restTemplate = restTemplate;
     }
 
-    public void fetchObjectPath(String path) {
+    public void sendObjectPath(String path) {
         URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .path("/climate-data")
                 .queryParam("object_name", path)
+                .build()
+                .toUri();
+        log.info("request url: [{}]", uri);
+        ResponseEntity<String> response = restTemplate.getForEntity(uri.toString(), String.class);
+
+        // 응답 결과 출력
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("Succeed fetch Object path data");
+        } else {
+            log.error("Failed fetch");
+        }
+    }
+
+    @Override
+    public void initiateLearningProcess() {
+        URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
+                .path("/climate-data-get")
                 .build()
                 .toUri();
         log.info("request url: [{}]", uri);

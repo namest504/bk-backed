@@ -1,5 +1,6 @@
 package k_paas.balloon.keeper.api.domain.climateData;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
 
 import k_paas.balloon.keeper.global.property.ApiKeyProperty;
@@ -31,5 +32,18 @@ public class ClimateDataController {
 
         return ResponseEntity.status(OK)
                 .body(recentCsvFilePath);
+    }
+
+    @GetMapping("/simulation/init")
+    public ResponseEntity<Void> initLearning(@RequestHeader(value = "BK-API-KEY") String apiKey) {
+
+        if (apiKey == null || !apiKey.equals(apiKeyProperty.key())) {
+            throw new RuntimeException("Invalid API Key");
+        }
+
+        climateDataService.initLearning();
+
+        return ResponseEntity.status(ACCEPTED)
+                .build();
     }
 }
