@@ -20,8 +20,11 @@ public class BalloonService {
     private final BalloonCommentRepository balloonCommentRepository;
 
     @Transactional(readOnly = true)
-    public List<BalloonPosition> findAll() {
-        return balloonPositionRepository.findAll();
+    public List<BalloonPositionResponse> findAll() {
+        return balloonPositionRepository.findAll()
+                .stream()
+                .map(BalloonPositionResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

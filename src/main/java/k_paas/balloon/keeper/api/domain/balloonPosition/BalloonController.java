@@ -26,8 +26,8 @@ public class BalloonController {
     private final BalloonService balloonService;
 
     @GetMapping
-    public ResponseEntity<List<BalloonPosition>> getAllConcurrentBalloonPosition() {
-        final List<BalloonPosition> result = balloonService.findAll();
+    public ResponseEntity<List<BalloonPositionResponse>> getAllConcurrentBalloonPosition() {
+        final List<BalloonPositionResponse> result = balloonService.findAll();
         log.info("/api/balloons excuted");
         return ResponseEntity.status(OK)
                 .body(result);
