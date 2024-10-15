@@ -46,7 +46,7 @@ public class SimulationClientImpl implements SimulationClient{
 
         // 응답 결과 출력
         if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("Succeed fetch Object path data");
+            log.info("Succeed initiateLearningProcess");
         } else {
             log.error("Failed fetch");
         }
