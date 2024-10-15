@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 public record PageableRequest(
-        @Min(1)
+        @Min(0)
         Integer page,
         @Min(1)
         Integer size,
@@ -17,6 +17,6 @@ public record PageableRequest(
         String effectiveSortBy = sortBy != null && !sortBy.isEmpty() ? sortBy : "createdAt";
         Sort.Direction direction = Sort.Direction.fromString(sortDirection != null ? sortDirection : "DESC");
         Sort sort = Sort.by(direction, effectiveSortBy);
-        return PageRequest.of(page != null ? page - 1 : 0, size != null ? size : 10, sort);
+        return PageRequest.of(page != null ? page : 0, size != null ? size : 10, sort);
     }
 }
