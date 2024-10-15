@@ -28,9 +28,7 @@ public class BalloonService {
     public PagedModel<BalloonCommentResponse> getPagedComments(Long balloonPositionId, Pageable pageable) {
         final Page<BalloonComment> balloonCommentPage = balloonCommentRepository.findAllCommentsWithPagination(balloonPositionId, pageable);
         List<BalloonCommentResponse> balloonCommentResponses = balloonCommentPage.stream()
-                .map(balloonComment ->
-                        BalloonCommentResponse.from(balloonComment)
-                )
+                .map(BalloonCommentResponse::from)
                 .collect(Collectors.toList());
 
         return new PagedModel<>(
