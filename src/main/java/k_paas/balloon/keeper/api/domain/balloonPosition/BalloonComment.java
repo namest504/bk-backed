@@ -30,7 +30,7 @@ public class BalloonComment {
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "balloon_position_id")
     private BalloonPosition balloonPosition;
 
     @Builder
