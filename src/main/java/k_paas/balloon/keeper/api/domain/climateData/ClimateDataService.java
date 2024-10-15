@@ -12,7 +12,7 @@ public class ClimateDataService {
     private final ClimateDataInMemoryStore climateDataInMemoryStore;
     private final NcpObjectStorageService ncpObjectStorageService;
 
-    public String getRecentCsvFilePath() {
+    public ClimateDataPathResponse getRecentCsvFilePath() {
         String recentPath = climateDataInMemoryStore.get(ClimateDataInMemoryStore.RECENT_PATH);
 
         if (recentPath == null) {
@@ -25,6 +25,6 @@ public class ClimateDataService {
 
         }
 
-        return recentPath;
+        return ClimateDataPathResponse.from(recentPath);
     }
 }

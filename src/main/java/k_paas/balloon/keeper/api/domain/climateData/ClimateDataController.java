@@ -21,13 +21,13 @@ public class ClimateDataController {
     private final ApiKeyProperty apiKeyProperty;
 
     @GetMapping("/data-path")
-    public ResponseEntity<String> getResentBatchedCsvPath(@RequestHeader(value = "BK-API-KEY") String apiKey) {
+    public ResponseEntity<ClimateDataPathResponse> getResentBatchedCsvPath(@RequestHeader(value = "BK-API-KEY") String apiKey) {
 
         if (apiKey == null || !apiKey.equals(apiKeyProperty.key())) {
             throw new RuntimeException("Invalid API Key");
         }
 
-        final String recentCsvFilePath = climateDataService.getRecentCsvFilePath();
+        final ClimateDataPathResponse recentCsvFilePath = climateDataService.getRecentCsvFilePath();
 
         return ResponseEntity.status(OK)
                 .body(recentCsvFilePath);
