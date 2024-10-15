@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,17 +33,19 @@ public class BalloonController {
                 .body(result);
     }
 
-    @GetMapping("/comments")
+    @GetMapping("/comments/{id}")
     public ResponseEntity<Page<BalloonComment>> getPagedComments(
+            @PathVariable(value = "id") Long balloonPositionId,
             @ModelAttribute @Valid PageableRequest pageableRequest) {
-        Page<BalloonComment> pagedComments = balloonService.getPagedComments(pageableRequest.toPageable());
+        Page<BalloonComment> pagedComments = balloonService.getPagedComments(balloonPositionId, pageableRequest.toPageable());
         return ResponseEntity.ok(pagedComments);
     }
 
-    @PostMapping("/comments")
+    @PostMapping("/comments/{id}")
     public ResponseEntity<Void> createComment(
+            @PathVariable(value = "id") Long balloonPositionId,
             @RequestBody @Valid BalloonCommentRequest request) {
-        balloonService.createComment(request);
+        balloonService.createComment(balloonPositionId, request);
         return ResponseEntity.status(NO_CONTENT)
                 .build();
     }

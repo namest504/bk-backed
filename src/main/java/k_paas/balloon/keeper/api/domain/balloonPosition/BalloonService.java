@@ -22,14 +22,18 @@ public class BalloonService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BalloonComment> getPagedComments(Pageable pageable) {
-        return balloonCommentRepository.findAllCommentsWithPagination(pageable);
+    public Page<BalloonComment> getPagedComments(Long balloonPositionId, Pageable pageable) {
+        return balloonCommentRepository.findAllCommentsWithPagination(balloonPositionId, pageable);
     }
 
     @Transactional
-    public void createComment(BalloonCommentRequest request) {
+    public void createComment(Long balloonPositionId, BalloonCommentRequest request) {
+        final BalloonPosition balloonPosition = balloonPositionRepository.findById(balloonPositionId)
+                .orElseThrow(() -> new RuntimeException("MissMatching balloonPositionId"));
+
         balloonCommentRepository.save(
                 BalloonComment.builder()
+                        .balloonPosition(balloonPosition)
                         .content(request.content())
                         .build()
         );

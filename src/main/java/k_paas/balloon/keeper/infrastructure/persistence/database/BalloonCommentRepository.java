@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface BalloonCommentRepository extends JpaRepository<BalloonComment, Long> {
 
-    @Query("SELECT bc FROM BalloonComment bc ORDER BY bc.createdAt DESC")
-    Page<BalloonComment> findAllCommentsWithPagination(Pageable pageable);
+    @Query("SELECT bc FROM BalloonComment bc WHERE bc.id = :balloonPositionIdPageable ORDER BY bc.createdAt DESC")
+    Page<BalloonComment> findAllCommentsWithPagination(Long balloonPositionIdPageable, Pageable pageable);
 
 }

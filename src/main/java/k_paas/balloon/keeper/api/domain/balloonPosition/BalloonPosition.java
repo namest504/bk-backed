@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +46,9 @@ public class BalloonPosition {
 
     @Column(name = "start_prediction_time")
     private Instant startPredictionTime;
+
+    @OneToMany(mappedBy = "balloonPosition")
+    List<BalloonComment> balloonComments;
 
     public BalloonPosition(
             Double latitude,
