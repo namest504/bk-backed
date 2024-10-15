@@ -2,6 +2,7 @@ package k_paas.balloon.keeper.api.domain.balloonPosition;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -47,7 +48,7 @@ public class BalloonPosition {
     @Column(name = "start_prediction_time")
     private Instant startPredictionTime;
 
-    @OneToMany(mappedBy = "balloonPosition")
+    @OneToMany(mappedBy = "balloonPosition", fetch = FetchType.LAZY)
     List<BalloonComment> balloonComments;
 
     public BalloonPosition(

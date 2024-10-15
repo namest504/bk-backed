@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -33,15 +33,15 @@ public class BalloonController {
                 .body(result);
     }
 
-    @GetMapping("/comments/{id}")
-    public ResponseEntity<Page<BalloonComment>> getPagedComments(
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<PagedModel<BalloonCommentResponse>> getPagedComments(
             @PathVariable(value = "id") Long balloonPositionId,
             @ModelAttribute @Valid PageableRequest pageableRequest) {
-        Page<BalloonComment> pagedComments = balloonService.getPagedComments(balloonPositionId, pageableRequest.toPageable());
+        final PagedModel<BalloonCommentResponse> pagedComments = balloonService.getPagedComments(balloonPositionId, pageableRequest.toPageable());
         return ResponseEntity.ok(pagedComments);
     }
 
-    @PostMapping("/comments/{id}")
+    @PostMapping("/{id}/comments")
     public ResponseEntity<Void> createComment(
             @PathVariable(value = "id") Long balloonPositionId,
             @RequestBody @Valid BalloonCommentRequest request) {

@@ -1,11 +1,14 @@
 package k_paas.balloon.keeper.api.domain.balloonPosition;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import k_paas.balloon.keeper.infrastructure.persistence.database.BalloonCommentRepository;
 import k_paas.balloon.keeper.infrastructure.persistence.database.BalloonPositionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +25,20 @@ public class BalloonService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BalloonComment> getPagedComments(Long balloonPositionId, Pageable pageable) {
-        return balloonCommentRepository.findAllCommentsWithPagination(balloonPositionId, pageable);
+    public PagedModel<BalloonCommentResponse> getPagedComments(Long balloonPositionId, Pageable pageable) {
+        final Page<BalloonComment> balloonCommentPage = balloonCommentRepository.findAllCommentsWithPagination(balloonPositionId, pageable);
+        List<BalloonCommentResponse> balloonCommentResponses = balloonCommentPage.stream()
+                .map(balloonComment ->
+                        BalloonCommentResponse.from(balloonComment)
+                )
+                .collect(Collectors.toList());
+
+        return new PagedModel<>(
+                new PageImpl<>(
+                        balloonCommentResponses,
+                        pageable,
+                        balloonCommentPage.getTotalElements()
+                ));
     }
 
     @Transactional
