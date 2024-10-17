@@ -47,7 +47,9 @@ public class NcpObjectStorageService {
         String objectName = folderName + "climate_data_" + LocalTime.now(ZoneId.of("Asia/Seoul")) + ".csv";
 
         try {
-            amazonS3Client.putObject(bucketName, objectName, new File(localFileName));
+            File file = new File(localFileName);
+            log.info("file size [{}]", file.getTotalSpace());
+            amazonS3Client.putObject(bucketName, objectName, file);
             log.info("Object {} has been created.", objectName);
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
