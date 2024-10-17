@@ -67,9 +67,11 @@ public class ClimateJobConfig {
         return new StepBuilder("climateStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     String timestamp = new SimpleDateFormat("yyyyMMddHH").format(new Date());
+                    log.info("timestamp = {}", timestamp);
                     addContextData(chunkContext, "timestamp", timestamp);
 
                     String csvFileName = String.format("./climate_data_%s.csv", timestamp);
+                    log.info("csvFileName = {}", csvFileName);
                     addContextData(chunkContext, "csvFileName", csvFileName);
                     existFileInLocal(csvFileName);
                     return RepeatStatus.FINISHED;
