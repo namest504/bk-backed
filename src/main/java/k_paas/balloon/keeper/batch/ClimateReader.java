@@ -1,12 +1,5 @@
 package k_paas.balloon.keeper.batch;
 
-import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_X_INDEX;
-import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_Y_INDEX;
-import static k_paas.balloon.keeper.batch.ClimateContants.ISOBARIC_ALTITUDE;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import k_paas.balloon.keeper.global.async.ClimateAsyncService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -14,6 +7,12 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static k_paas.balloon.keeper.batch.ClimateContants.*;
 
 @Slf4j
 @Component
@@ -58,7 +57,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
                     isCompleted = true;
                     break;
                 }
-                buffer = processClimateData(currentAltitudeIndex, 0, timestamp);
+                buffer = processClimateData(currentAltitudeIndex, 12, timestamp);
 
                 currentAltitudeIndex++;
             }

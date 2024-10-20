@@ -1,15 +1,5 @@
 package k_paas.balloon.keeper.batch;
 
-import static k_paas.balloon.keeper.batch.BatchContextUtil.addContextData;
-import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentBatchContext;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.persistence.memory.ClimateDataInMemoryStore;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
@@ -26,6 +16,20 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.List;
+import java.util.TimeZone;
+
+import static k_paas.balloon.keeper.batch.BatchContextUtil.addContextData;
+import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentBatchContext;
 
 @Slf4j
 @EnableBatchProcessing
@@ -66,8 +70,16 @@ public class ClimateJobConfig {
     public Step climateStep() {
         return new StepBuilder("climateStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    String timestamp = new SimpleDateFormat("yyyyMMddHH").format(new Date());
-                    log.info("timestamp = {}", timestamp);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
+                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    log.info("raw timestamp = {}", sdf.format(LocalDateTime.now(ZoneId.of("UTC"))));
+
+                    // 현재 시간에서 12시간을 뺍니다
+                    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                    calendar.add(Calendar.HOUR_OF_DAY, -12);
+
+                    String timestamp = sdf.format(calendar.getTime());
+                    log.info("calc timestamp = {}", timestamp);
                     addContextData(chunkContext, "timestamp", timestamp);
 
                     String csvFileName = String.format("./climate_data_%s.csv", timestamp);
