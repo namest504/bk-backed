@@ -1,7 +1,5 @@
 package k_paas.balloon.keeper.api.domain.balloonPosition;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import k_paas.balloon.keeper.infrastructure.persistence.database.BalloonCommentRepository;
 import k_paas.balloon.keeper.infrastructure.persistence.database.BalloonPositionRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +10,9 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class BalloonService {
@@ -21,7 +22,7 @@ public class BalloonService {
 
     @Transactional(readOnly = true)
     public List<BalloonPositionResponse> findAll() {
-        return balloonPositionRepository.findAll()
+        return balloonPositionRepository.findPositionsWithinLast12Hours()
                 .stream()
                 .map(BalloonPositionResponse::from)
                 .collect(Collectors.toList());
