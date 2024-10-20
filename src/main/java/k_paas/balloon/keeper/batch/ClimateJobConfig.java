@@ -21,12 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.TimeZone;
 
 import static k_paas.balloon.keeper.batch.BatchContextUtil.addContextData;
 import static k_paas.balloon.keeper.batch.BatchContextUtil.getCurrentBatchContext;
@@ -70,25 +68,33 @@ public class ClimateJobConfig {
     public Step climateStep() {
         return new StepBuilder("climateStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH");
-                    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    log.info("raw timestamp = {}", sdf.format(LocalDateTime.now(ZoneId.of("UTC"))));
-
-                    // 현재 시간에서 12시간을 뺍니다
-                    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                    calendar.add(Calendar.HOUR_OF_DAY, -12);
-
-                    String timestamp = sdf.format(calendar.getTime());
-                    log.info("calc timestamp = {}", timestamp);
-                    addContextData(chunkContext, "timestamp", timestamp);
-
-                    String csvFileName = String.format("./climate_data_%s.csv", timestamp);
-                    log.info("csvFileName = {}", csvFileName);
-                    addContextData(chunkContext, "csvFileName", csvFileName);
-                    existFileInLocal(csvFileName);
+                    String timestamp = setTimestamp(chunkContext);
+                    setCsvFilePath(chunkContext, timestamp);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
+    }
+
+    private void setCsvFilePath(ChunkContext chunkContext, String timestamp) {
+        String csvFileName = String.format("./climate_data_%s.csv", timestamp);
+        log.info("csvFileName = {}", csvFileName);
+        existFileInLocal(csvFileName);
+        addContextData(chunkContext, "csvFileName", csvFileName);
+    }
+
+    private static String setTimestamp(ChunkContext chunkContext) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
+        ZoneId utcZone = ZoneId.of("UTC");
+
+        ZonedDateTime now = ZonedDateTime.now(utcZone);
+        log.info("raw timestamp = {}", now.format(formatter));
+
+        ZonedDateTime twelveHoursAgo = now.minusHours(12);
+
+        String timestamp = twelveHoursAgo.format(formatter);
+        log.info("calc timestamp = {}", timestamp);
+        addContextData(chunkContext, "timestamp", timestamp);
+        return timestamp;
     }
 
     @Bean
