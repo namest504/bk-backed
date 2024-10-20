@@ -2,19 +2,15 @@ package k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.ListObjectsV2Request;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
@@ -48,7 +44,7 @@ public class NcpObjectStorageService {
 
         try {
             File file = new File(localFileName);
-            log.info("file size [{}]", file.getTotalSpace());
+            validateFileSize(file);
             amazonS3Client.putObject(bucketName, objectName, file);
             log.info("Object {} has been created.", objectName);
         } catch (AmazonS3Exception e) {
@@ -58,6 +54,17 @@ public class NcpObjectStorageService {
         }
 
         return objectName;
+    }
+
+    private void validateFileSize(File file) {
+        long fileSizeInBytes = file.length();
+        double fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0);
+
+        if (fileSizeInBytes == 0) {
+            throw new IllegalArgumentException("File size is 0 bytes. Cannot upload empty file.");
+        }
+
+        log.info("File size: {:.2f} MB", fileSizeInMB);
     }
 
     public String getLatestObjectPath() {

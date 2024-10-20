@@ -82,21 +82,6 @@ public class ClimateJobConfig {
         addContextData(chunkContext, "csvFileName", csvFileName);
     }
 
-    private static String setTimestamp(ChunkContext chunkContext) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
-        ZoneId utcZone = ZoneId.of("UTC");
-
-        ZonedDateTime now = ZonedDateTime.now(utcZone);
-        log.info("raw timestamp = {}", now.format(formatter));
-
-        ZonedDateTime twelveHoursAgo = now.minusHours(12);
-
-        String timestamp = twelveHoursAgo.format(formatter);
-        log.info("calc timestamp = {}", timestamp);
-        addContextData(chunkContext, "timestamp", timestamp);
-        return timestamp;
-    }
-
     @Bean
     public Step uploadToObjectStep() {
         return new StepBuilder("uploadToS3Step", jobRepository)
@@ -131,6 +116,21 @@ public class ClimateJobConfig {
                 log.error("Error creating new file: {}", csvFileName, e);
             }
         }
+    }
+
+    private String setTimestamp(ChunkContext chunkContext) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
+        ZoneId utcZone = ZoneId.of("UTC");
+
+        ZonedDateTime now = ZonedDateTime.now(utcZone);
+        log.info("raw timestamp = {}", now.format(formatter));
+
+        ZonedDateTime twelveHoursAgo = now.minusHours(12);
+
+        String timestamp = twelveHoursAgo.format(formatter);
+        log.info("calc timestamp = {}", timestamp);
+        addContextData(chunkContext, "timestamp", timestamp);
+        return timestamp;
     }
 
     private void uploadProcess(ChunkContext chunkContext) {
