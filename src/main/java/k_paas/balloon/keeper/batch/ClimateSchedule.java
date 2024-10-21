@@ -25,7 +25,7 @@ public class ClimateSchedule {
     /**
      * 매일 6시간 간격 10분에 작업을 수행 UTC 기준
      */
-    @Scheduled(cron = "0 10 */6 * * *", zone = "UTC" )
+    @Scheduled(cron = "0 30 */6 * * *", zone = "UTC" )
     public void execute() {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
