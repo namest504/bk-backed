@@ -1,11 +1,21 @@
 package k_paas.balloon.keeper.infrastructure.client;
 
-import java.net.URI;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
+import java.net.URI;
 
 @Slf4j
 @Component
@@ -50,5 +60,48 @@ public class SimulationClientImpl implements SimulationClient{
         } else {
             log.error("Failed fetch");
         }
+    }
+
+    @Override
+    public void fetchImage(SimulationImageDto simulationImageDto) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
+                .path("/api/process-image")
+                .build()
+                .toUri();
+
+        log.info("request url: [{}]", uri);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("balloonReportId", simulationImageDto.balloonReportId());
+        body.add("serialCode", simulationImageDto.serialCode());
+        body.add("file", createFileResource(simulationImageDto.file()));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(uri, requestEntity, String.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("Succeed fetchImage");
+        } else {
+            log.error("Failed fetch");
+        }
+    }
+
+    private Resource createFileResource(MultipartFile file){
+        ByteArrayResource byteArrayResource = null;
+        try{
+            byteArrayResource = new ByteArrayResource(file.getBytes()) {
+                @Override
+                public String getFilename() {
+                    return file.getOriginalFilename();
+                }
+            };
+        } catch (IOException e) {
+            log.error("Failed fetch");
+        }
+        return byteArrayResource;
     }
 }
