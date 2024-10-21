@@ -56,7 +56,6 @@ public class Application {
     /**
      * Batch Process Development Test
      */
-	
 	@Bean
 	public ApplicationRunner runJobOnStartup() {
 		return args -> {
