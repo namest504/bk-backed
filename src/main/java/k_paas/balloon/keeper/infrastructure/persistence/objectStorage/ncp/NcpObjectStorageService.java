@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.List;
 
 @Slf4j
@@ -40,7 +38,8 @@ public class NcpObjectStorageService {
             e.printStackTrace();
         }
 
-        String objectName = folderName + "climate_data_" + LocalTime.now(ZoneId.of("Asia/Seoul")) + ".csv";
+        String objectName = folderName + localFileName;
+//                "climate_data_" + LocalTime.now(ZoneId.of("Asia/Seoul")) + ".csv";
 
         try {
             File file = new File(localFileName);

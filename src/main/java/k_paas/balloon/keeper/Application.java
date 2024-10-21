@@ -60,7 +60,7 @@ public class Application {
 	@Bean
 	public ApplicationRunner runJobOnStartup() {
 		return args -> {
-//            batchProcess();
+            batchProcess();
         };
 	}
 

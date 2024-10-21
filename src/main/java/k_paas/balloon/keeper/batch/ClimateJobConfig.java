@@ -75,13 +75,6 @@ public class ClimateJobConfig {
                 .build();
     }
 
-    private void setCsvFilePath(ChunkContext chunkContext, String timestamp) {
-        String csvFileName = String.format("./climate_data_%s.csv", timestamp);
-        log.info("csvFileName = {}", csvFileName);
-        existFileInLocal(csvFileName);
-        addContextData(chunkContext, "csvFileName", csvFileName);
-    }
-
     @Bean
     public Step uploadToObjectStep() {
         return new StepBuilder("uploadToS3Step", jobRepository)
@@ -131,6 +124,13 @@ public class ClimateJobConfig {
         log.info("calc timestamp = {}", timestamp);
         addContextData(chunkContext, "timestamp", timestamp);
         return timestamp;
+    }
+
+    private void setCsvFilePath(ChunkContext chunkContext, String timestamp) {
+        String csvFileName = String.format("./climate_data_%s.csv", timestamp);
+        log.info("csvFileName = {}", csvFileName);
+        existFileInLocal(csvFileName);
+        addContextData(chunkContext, "csvFileName", csvFileName);
     }
 
     private void uploadProcess(ChunkContext chunkContext) {
