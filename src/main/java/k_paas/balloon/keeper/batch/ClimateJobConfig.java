@@ -118,9 +118,7 @@ public class ClimateJobConfig {
         ZonedDateTime now = ZonedDateTime.now(utcZone);
         log.info("raw timestamp = {}", now.format(formatter));
 
-        ZonedDateTime twelveHoursAgo = now.minusHours(12);
-
-        String timestamp = twelveHoursAgo.format(formatter);
+        String timestamp = now.minusDays(1).format(formatter);
         log.info("calc timestamp = {}", timestamp);
         addContextData(chunkContext, "timestamp", timestamp);
         return timestamp;

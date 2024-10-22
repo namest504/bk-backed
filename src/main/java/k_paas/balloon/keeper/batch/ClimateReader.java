@@ -18,8 +18,10 @@ import static k_paas.balloon.keeper.batch.ClimateContants.*;
 @Component
 public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>, StepExecutionListener {
 
-    private int currentAltitudeIndex = 0;
+    public static final int PREDICT_HOUR = 24;
     private static final int CHUNK_SIZE = 100;
+
+    private int currentAltitudeIndex = 0;
     private boolean isCompleted = false;
     private String timestamp;
     private List<UpdateClimateServiceSpec> buffer = new ArrayList<>();
@@ -57,7 +59,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
                     isCompleted = true;
                     break;
                 }
-                buffer = processClimateData(currentAltitudeIndex, 12, timestamp);
+                buffer = processClimateData(currentAltitudeIndex, PREDICT_HOUR, timestamp);
 
                 currentAltitudeIndex++;
             }
