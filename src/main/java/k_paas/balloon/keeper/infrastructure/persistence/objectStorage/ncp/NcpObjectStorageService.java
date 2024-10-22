@@ -23,12 +23,13 @@ public class NcpObjectStorageService {
     }
 
     public String putObject(String localFileName, String path) {
+        String folderName = path;
+
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(0L);
         objectMetadata.setContentType("application/x-directory");
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName, new ByteArrayInputStream(new byte[0]), objectMetadata);
 
-        String folderName = path;
 
         try {
             amazonS3Client.putObject(putObjectRequest);
@@ -67,11 +68,11 @@ public class NcpObjectStorageService {
         log.info("File size: {:.2f} MB", fileSizeInMB);
     }
 
-    public String getLatestObjectPath() {
+    public String getLatestObjectPath(String path) {
         try {
             ListObjectsV2Request listObjectsRequest = new ListObjectsV2Request()
                     .withBucketName(bucketName)
-                    .withPrefix(folderName);
+                    .withPrefix(path);
 
             ListObjectsV2Result result;
             String latestObjectKey = null;
