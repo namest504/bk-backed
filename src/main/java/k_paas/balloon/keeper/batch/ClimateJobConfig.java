@@ -141,7 +141,7 @@ public class ClimateJobConfig {
 
     private String putObjectInNCPObjectStorage(ChunkContext chunkContext) {
         String fileName = getCurrentBatchContext(chunkContext, "csvFileName");
-        String object = ncpObjectStorageService.putObject(fileName);
+        String object = ncpObjectStorageService.putObject(fileName, "climate/");
         return object;
     }
 

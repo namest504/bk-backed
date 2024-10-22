@@ -27,6 +27,11 @@ public class BalloonReport {
     private String serialCode;
 
     /**
+     * 신고 이미지 경로
+     */
+    private String imagePath;
+
+    /**
      * 오물 풍선 이미지 여부 체크 상태
      * @default null
      * 이미지 상태 값 수정은 simulation server에서 수행
@@ -60,9 +65,10 @@ public class BalloonReport {
 
     @Builder
     private BalloonReport(
-            Double reportedLatitude,
+            String imagePath, Double reportedLatitude,
             Double reportedLongitude
     ) {
+        this.imagePath = imagePath;
         this.serialCode = CodeGenerateUtil.generateCode();
         this.reportedLatitude = reportedLatitude;
         this.reportedLongitude = reportedLongitude;

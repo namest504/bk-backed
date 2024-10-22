@@ -15,7 +15,6 @@ import java.util.List;
 public class NcpObjectStorageService {
 
     private static final String bucketName = "contest73-bucket";
-    private static final String folderName = "climate/";
 
     private final AmazonS3Client amazonS3Client;
 
@@ -23,11 +22,13 @@ public class NcpObjectStorageService {
         this.amazonS3Client = amazonS3Client;
     }
 
-    public String putObject(String localFileName) {
+    public String putObject(String localFileName, String path) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(0L);
         objectMetadata.setContentType("application/x-directory");
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName, new ByteArrayInputStream(new byte[0]), objectMetadata);
+
+        String folderName = path;
 
         try {
             amazonS3Client.putObject(putObjectRequest);
