@@ -1,5 +1,8 @@
 package k_paas.balloon.keeper.api.domain.balloonPosition;
 
+import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
+import k_paas.balloon.keeper.global.exception.NotFoundException;
+import k_paas.balloon.keeper.global.exception.NotImageTypeException;
 import k_paas.balloon.keeper.global.util.ImageValidateUtil;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.client.SimulationImageDto;
@@ -20,6 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static k_paas.balloon.keeper.global.exception.InternalServiceConnectionException.NCP_OBJECT_STORAGE;
+import static k_paas.balloon.keeper.global.exception.NotFoundException.LOCAL_FILE;
+import static k_paas.balloon.keeper.global.exception.NotFoundException.REQUEST;
 
 @Slf4j
 @Service
@@ -58,7 +65,7 @@ public class BalloonService {
     @Transactional
     public void createComment(Long balloonPositionId, BalloonCommentRequest request) {
         final BalloonPosition balloonPosition = balloonPositionRepository.findById(balloonPositionId)
-                .orElseThrow(() -> new RuntimeException("MissMatching balloonPositionId"));
+                .orElseThrow(() -> new NotFoundException(REQUEST));
 
         balloonCommentRepository.save(
                 BalloonComment.builder()
@@ -71,11 +78,11 @@ public class BalloonService {
     @Transactional
     public String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request) {
         if (!ImageValidateUtil.isValidImage(file)) {
-            throw new RuntimeException("File is not Image Format");
+            throw new NotImageTypeException();
         }
         String objectKey = getNcpObjectKey(file);
         if(objectKey == null) {
-            throw new RuntimeException("Failed Upload Image to NCP");
+            throw new InternalServiceConnectionException(NCP_OBJECT_STORAGE);
         }
         BalloonReport balloonReport = balloonReportRepository.save(
                 BalloonReport.builder()
@@ -109,6 +116,7 @@ public class BalloonService {
             tempFile.delete();
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new NotFoundException(LOCAL_FILE);
         }
 
         return objectKey;

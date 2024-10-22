@@ -1,5 +1,6 @@
 package k_paas.balloon.keeper.infrastructure.client;
 
+import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+
+import static k_paas.balloon.keeper.global.exception.InternalServiceConnectionException.SIMULATION_SERVER;
 
 @Slf4j
 @Component
@@ -36,6 +39,7 @@ public class SimulationClientImpl implements SimulationClient{
             log.info("Succeed fetch Object path data");
         } else {
             log.error("Failed fetch");
+            throw new InternalServiceConnectionException(SIMULATION_SERVER);
         }
     }
 
@@ -53,6 +57,7 @@ public class SimulationClientImpl implements SimulationClient{
             log.info("Succeed initiateLearningProcess");
         } else {
             log.error("Failed fetch");
+            throw new InternalServiceConnectionException(SIMULATION_SERVER);
         }
     }
 
@@ -76,6 +81,7 @@ public class SimulationClientImpl implements SimulationClient{
             log.info("Succeed fetchImage");
         } else {
             log.error("Failed fetch");
+            throw new InternalServiceConnectionException(SIMULATION_SERVER);
         }
     }
 }
