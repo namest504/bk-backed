@@ -113,7 +113,7 @@ public class BalloonService {
             file.transferTo(tempFile);
 
             // 파일 경로를 사용하여 S3에 업로드
-            objectKey = ncpObjectStorageService.putObject(tempFile.getAbsolutePath(), "reportImage/");
+            objectKey = ncpObjectStorageService.putObject(tempFile.getAbsolutePath(), "reportImage");
 
             // 임시 파일 삭제
             tempFile.delete();
