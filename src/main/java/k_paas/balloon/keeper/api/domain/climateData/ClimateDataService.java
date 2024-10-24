@@ -18,7 +18,7 @@ public class ClimateDataService {
         String recentPath = climateDataInMemoryStore.get(ClimateDataInMemoryStore.RECENT_PATH);
 
         if (recentPath == null) {
-            recentPath = ncpObjectStorageService.getLatestObjectPath("climate/");
+            recentPath = ncpObjectStorageService.getLatestObjectPath(recentPath);
 
             if (recentPath == null) {
                 throw new RuntimeException("Not Found Recent Data");
