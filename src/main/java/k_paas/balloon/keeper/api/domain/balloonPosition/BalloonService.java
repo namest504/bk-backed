@@ -132,4 +132,9 @@ public class BalloonService {
                 .map(BalloonReportDto::from)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<BalloonReportWithCount> getReportBalloonCount() {
+        return balloonReportRepository.findBalloonReportsWithCount();
+    }
 }

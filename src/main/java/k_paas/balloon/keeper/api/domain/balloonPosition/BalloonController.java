@@ -50,6 +50,14 @@ public class BalloonController {
                 .build();
     }
 
+    @GetMapping("/report")
+    public ResponseEntity<List<BalloonReportWithCount>> getReportBalloon(){
+        final List<BalloonReportWithCount> response = balloonService.getReportBalloonCount();
+
+        return ResponseEntity.status(OK)
+                .body(response);
+    }
+
     @PostMapping("/report")
     public ResponseEntity<ReportBalloonImageCodeResponse> reportBalloonImage(
             @RequestPart("image") MultipartFile file,
