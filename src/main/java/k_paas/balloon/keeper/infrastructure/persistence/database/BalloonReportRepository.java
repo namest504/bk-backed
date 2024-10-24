@@ -17,7 +17,7 @@ public interface BalloonReportRepository extends JpaRepository<BalloonReport, Lo
             select new k_paas.balloon.keeper.api.domain.balloonPosition.BalloonReportWithCount(br.centerLatitude, br.centerLongitude, br.streetAddress, count(br.id))
             from BalloonReport br
             where br.isCheckedStatus = true
-            group by br.reportedLatitude, br.reportedLongitude, br.streetAddress
+            group by br.centerLatitude, br.centerLongitude, br.streetAddress
             """)
     List<BalloonReportWithCount> findBalloonReportsWithCount();
 }
