@@ -1,5 +1,7 @@
 package k_paas.balloon.keeper.api.domain.balloonPosition;
 
+import java.time.LocalDateTime;
+
 public record BalloonReportDto(
         Long id,
         String serialCode,
@@ -8,7 +10,8 @@ public record BalloonReportDto(
         Double reportedLongitude,
         Double centerLatitude,
         Double centerLongitude,
-        String streetAddress
+        String streetAddress,
+        LocalDateTime reportedTime
 ) {
     public static BalloonReportDto from(BalloonReport balloonReport) {
         return new BalloonReportDto(
@@ -19,7 +22,8 @@ public record BalloonReportDto(
                 balloonReport.getReportedLongitude(),
                 balloonReport.getCenterLatitude(),
                 balloonReport.getCenterLongitude(),
-                balloonReport.getStreetAddress()
+                balloonReport.getStreetAddress(),
+                balloonReport.getCreatedAt()
         );
     }
 }

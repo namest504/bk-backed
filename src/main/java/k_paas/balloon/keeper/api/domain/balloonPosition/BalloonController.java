@@ -63,7 +63,7 @@ public class BalloonController {
     }
 
     @GetMapping("/report/status")
-    public ResponseEntity<?> createReportBalloonData(
+    public ResponseEntity<List<BalloonReportDto>> createReportBalloonData(
             @RequestParam("codes") List<String> codes
     ) {
         final List<BalloonReportDto> reportedBalloon = balloonService.getReportedBalloon(codes);
