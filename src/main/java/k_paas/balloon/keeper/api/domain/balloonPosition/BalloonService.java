@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,6 +91,7 @@ public class BalloonService {
                         .imagePath(objectKey)
                         .reportedLatitude(request.latitude())
                         .reportedLongitude(request.longitude())
+                        .reportTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build()
         );
 
