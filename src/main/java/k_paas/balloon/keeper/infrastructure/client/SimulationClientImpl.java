@@ -18,7 +18,8 @@ import static k_paas.balloon.keeper.global.exception.InternalServiceConnectionEx
 @Component
 public class SimulationClientImpl implements SimulationClient{
 
-    private final static String API_URL = "http://my-simulation-server-service:8001";
+//    private final static String API_URL = "http://my-simulation-server-service:8001";
+    private final static String API_URL = "http://my-detection-server-service:8003";
     private final RestTemplate restTemplate;
 
     public SimulationClientImpl(RestTemplate restTemplate) {
