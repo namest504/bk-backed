@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
@@ -82,11 +83,15 @@ public class ClimateDataController {
                 .addLong("uniqueId", System.currentTimeMillis())
                 .toJobParameters();
 
-        try {
-            jobLauncher.run(climateJobConfig.climateJob(), jobParameters);
-        } catch (JobExecutionException e) {
-            log.error("Job 수행 실패 cause : {}", e.getMessage());
-        }
+        CompletableFuture.runAsync(() -> {
+            try {
+                jobLauncher.run(climateJobConfig.climateJob(), jobParameters);
+                log.info("Batch job started successfully for parameters: {}", jobParameters);
+            } catch (JobExecutionException e) {
+                log.error("Job 수행 실패 cause : {}", e.getMessage());
+                // 필요한 경우 여기에 추가적인 오류 처리 로직을 구현할 수 있습니다.
+            }
+        });
 
         return ResponseEntity.status(ACCEPTED)
                 .build();
