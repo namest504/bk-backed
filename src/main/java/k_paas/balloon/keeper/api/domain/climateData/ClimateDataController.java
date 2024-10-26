@@ -6,9 +6,16 @@ import k_paas.balloon.keeper.global.exception.InvalidAPIKeyException;
 import k_paas.balloon.keeper.global.property.ApiKeyProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.JobExecutionException;
+import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
@@ -61,9 +68,35 @@ public class ClimateDataController {
             throw new InvalidAPIKeyException();
         }
 
-        climateSchedule.execute(utcTime, predictHour);
+        if(utcTime.trim().isEmpty() || utcTime == null) {
+            utcTime = getCurrentTime();
+        }
+
+        if(predictHour.trim().isEmpty() ||predictHour == null) {
+            predictHour = "24";
+        }
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("batchStartedTime", utcTime)
+                .addString("predictHour", predictHour)
+                .toJobParameters();
+
+        try {
+            jobLauncher.run(climateJobConfig.climateJob(), jobParameters);
+        } catch (JobExecutionException e) {
+            log.error("Job 수행 실패 cause : {}", e.getMessage());
+        }
 
         return ResponseEntity.status(ACCEPTED)
                 .build();
+    }
+
+    private static String getCurrentTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
+        ZoneId utcZone = ZoneId.of("UTC");
+
+        ZonedDateTime now = ZonedDateTime.now(utcZone);
+        log.info("raw timestamp = {}", now.format(formatter));
+
+        return now.minusHours(24).format(formatter);
     }
 }

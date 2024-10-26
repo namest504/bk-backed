@@ -30,17 +30,10 @@ public class ClimateSchedule {
      * 매일 6시간 간격 10분에 작업을 수행 UTC 기준
      */
     @Scheduled(cron = "0 30 */6 * * *", zone = "UTC" )
-    public void execute(String batchStartedTime, String predictHour) {
-        if(batchStartedTime == null) {
-            batchStartedTime = getCurrentTime();
-        }
-
-        if(predictHour == null) {
-            predictHour = "24";
-        }
+    public void execute() {
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("batchStartedTime", batchStartedTime)
-                .addString("predictHour", predictHour)
+                .addString("batchStartedTime", getCurrentTime())
+                .addString("predictHour", "24")
                 .toJobParameters();
 
         try {
