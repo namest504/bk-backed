@@ -20,7 +20,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
 
     private static final int CHUNK_SIZE = 100;
 
-    private int currentAltitudeIndex = 0;
+    private int currentAltitudeIndex;
     private boolean isCompleted = false;
     private String timestamp;
     private String predictHour;
@@ -42,6 +42,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
         this.predictHour = (String) stepExecution.getJobExecution().getJobParameters().getParameters().get("predictHour").getValue();
         this.isCompleted = false;
         this.buffer.clear();
+        currentAltitudeIndex = 0;
         log.info("ClimateReader initialized with currentAltitudeIndex: {}", currentAltitudeIndex);
     }
 
