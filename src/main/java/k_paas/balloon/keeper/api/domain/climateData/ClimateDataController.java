@@ -72,12 +72,14 @@ public class ClimateDataController {
             utcTime = getCurrentTime();
         }
 
-        if(predictHour.trim().isEmpty() ||predictHour == null) {
+        if(predictHour.trim().isEmpty() || predictHour == null) {
             predictHour = "24";
         }
+        log.info("[{}][{}]", utcTime, predictHour);
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("batchStartedTime", utcTime)
                 .addString("predictHour", predictHour)
+                .addLong("uniqueId", System.currentTimeMillis())
                 .toJobParameters();
 
         try {

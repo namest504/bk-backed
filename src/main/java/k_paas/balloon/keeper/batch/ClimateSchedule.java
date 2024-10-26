@@ -34,6 +34,7 @@ public class ClimateSchedule {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("batchStartedTime", getCurrentTime())
                 .addString("predictHour", "24")
+                .addLong("uniqueId", System.currentTimeMillis())
                 .toJobParameters();
 
         try {
