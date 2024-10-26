@@ -109,7 +109,8 @@ public class ClimateJobConfig {
 
     private void setCsvFilePath(ChunkContext chunkContext) {
         String batchStartedTime = (String) chunkContext.getStepContext().getJobParameters().get("batchStartedTime");
-        String csvFileName = String.format("./climate_data_%s.csv", batchStartedTime);
+        String predictHour = (String) chunkContext.getStepContext().getJobParameters().get("predictHour");
+        String csvFileName = String.format("./climate_data_%s_%s.csv", batchStartedTime, predictHour);
         log.info("csvFileName = {}", csvFileName);
         existFileInLocal(csvFileName);
         addContextData(chunkContext, "csvFileName", csvFileName);
