@@ -18,12 +18,12 @@ import static k_paas.balloon.keeper.batch.ClimateContants.*;
 @Component
 public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>, StepExecutionListener {
 
-    public static final int PREDICT_HOUR = 24;
     private static final int CHUNK_SIZE = 100;
 
     private int currentAltitudeIndex = 0;
     private boolean isCompleted = false;
     private String timestamp;
+    private String predictHour;
     private List<UpdateClimateServiceSpec> buffer = new ArrayList<>();
 
     private final ClimateAsyncService climateAsyncService;
@@ -38,7 +38,8 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      */
     @Override
     public void beforeStep(StepExecution stepExecution) {
-        this.timestamp = (String) stepExecution.getJobExecution().getExecutionContext().get("timestamp");
+        this.timestamp = (String) stepExecution.getJobExecution().getJobParameters().getParameters().get("batchStartedTime").getValue();
+        this.predictHour = (String) stepExecution.getJobExecution().getJobParameters().getParameters().get("predictHour").getValue();
         this.isCompleted = false;
         this.buffer.clear();
         log.info("ClimateReader initialized with currentAltitudeIndex: {}", currentAltitudeIndex);
@@ -59,7 +60,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
                     isCompleted = true;
                     break;
                 }
-                buffer = processClimateData(currentAltitudeIndex, PREDICT_HOUR, timestamp);
+                buffer = processClimateData(currentAltitudeIndex, predictHour, timestamp);
 
                 currentAltitudeIndex++;
             }
@@ -85,7 +86,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param timeStamp
      * @return
      */
-    private List<UpdateClimateServiceSpec> processClimateData(int altitude, int predictHour, String timeStamp) {
+    private List<UpdateClimateServiceSpec> processClimateData(int altitude, String predictHour, String timeStamp) {
         CompletableFuture<String[][]> completableUVectors = sendClimateRequest(2002, altitude, predictHour, timeStamp);
         CompletableFuture<String[][]> completableVVectors = sendClimateRequest(2003, altitude, predictHour, timeStamp);
 
@@ -93,7 +94,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
                 .thenApply(r -> {
                     String[][] uVectorArray = completableUVectors.join();
                     String[][] vVectorArray = completableVVectors.join();
-                    List<UpdateClimateServiceSpec> updateClimateServiceSpecs = saveClimateData(altitude, predictHour, uVectorArray, vVectorArray);
+                    List<UpdateClimateServiceSpec> updateClimateServiceSpecs = saveClimateData(altitude, uVectorArray, vVectorArray);
                     return updateClimateServiceSpecs;
                 }).join();
         return result;
@@ -107,11 +108,11 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param timeStamp
      * @return
      */
-    private CompletableFuture<String[][]> sendClimateRequest(int parameterIndex, int altitude, int predictHour, String timeStamp) {
+    private CompletableFuture<String[][]> sendClimateRequest(int parameterIndex, int altitude, String predictHour, String timeStamp) {
         return climateAsyncService.sendRequest(
                 String.valueOf(parameterIndex),
                 String.valueOf(ISOBARIC_ALTITUDE[altitude]),
-                String.valueOf(predictHour),
+                predictHour,
                 timeStamp
         );
     }
@@ -124,13 +125,13 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param vVectorArray
      * @return
      */
-    private List<UpdateClimateServiceSpec> saveClimateData(int altitude, int predictHour, String[][] uVectorArray, String[][] vVectorArray) {
+    private List<UpdateClimateServiceSpec> saveClimateData(int altitude, String[][] uVectorArray, String[][] vVectorArray) {
         List<UpdateClimateServiceSpec> result = new ArrayList<>();
 
         // TODO: Y 마지막 인덱스 데이터 null 발생
         for (int y = 0; y < ARRAY_Y_INDEX - 1; y++) {
             for (int x = 0; x < ARRAY_X_INDEX; x++) {
-                result.add(createUpdateClimateSpec(y, x, altitude, predictHour, uVectorArray, vVectorArray));
+                result.add(createUpdateClimateSpec(y, x, altitude, uVectorArray, vVectorArray));
             }
         }
         return result;
@@ -146,7 +147,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param vVectorArray
      * @return
      */
-    private UpdateClimateServiceSpec createUpdateClimateSpec(int y, int x, int altitude, int predictHour, String[][] uVectorArray, String[][] vVectorArray) {
+    private UpdateClimateServiceSpec createUpdateClimateSpec(int y, int x, int altitude, String[][] uVectorArray, String[][] vVectorArray) {
         UpdateClimateServiceSpec spec = UpdateClimateServiceSpec.builder()
                 .y(y)
                 .x(x)

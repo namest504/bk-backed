@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.infrastructure.persistence.database;
+package k_paas.balloon.keeper.infrastructure.persistence.repository;
 
 import k_paas.balloon.keeper.api.domain.balloonPosition.BalloonReport;
 import k_paas.balloon.keeper.api.domain.balloonPosition.BalloonReportWithCount;

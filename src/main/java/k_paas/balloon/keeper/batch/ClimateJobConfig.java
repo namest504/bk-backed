@@ -21,9 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static k_paas.balloon.keeper.batch.BatchContextUtil.addContextData;
@@ -68,8 +65,7 @@ public class ClimateJobConfig {
     public Step climateStep() {
         return new StepBuilder("climateStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    String timestamp = setTimestamp(chunkContext);
-                    setCsvFilePath(chunkContext, timestamp);
+                    setCsvFilePath(chunkContext);
                     return RepeatStatus.FINISHED;
                 }, transactionManager)
                 .build();
@@ -111,21 +107,9 @@ public class ClimateJobConfig {
         }
     }
 
-    private String setTimestamp(ChunkContext chunkContext) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
-        ZoneId utcZone = ZoneId.of("UTC");
-
-        ZonedDateTime now = ZonedDateTime.now(utcZone);
-        log.info("raw timestamp = {}", now.format(formatter));
-
-        String timestamp = now.minusDays(1).format(formatter);
-        log.info("calc timestamp = {}", timestamp);
-        addContextData(chunkContext, "timestamp", timestamp);
-        return timestamp;
-    }
-
-    private void setCsvFilePath(ChunkContext chunkContext, String timestamp) {
-        String csvFileName = String.format("./climate_data_%s.csv", timestamp);
+    private void setCsvFilePath(ChunkContext chunkContext) {
+        String batchStartedTime = (String) chunkContext.getStepContext().getJobParameters().get("batchStartedTime");
+        String csvFileName = String.format("./climate_data_%s.csv", batchStartedTime);
         log.info("csvFileName = {}", csvFileName);
         existFileInLocal(csvFileName);
         addContextData(chunkContext, "csvFileName", csvFileName);
