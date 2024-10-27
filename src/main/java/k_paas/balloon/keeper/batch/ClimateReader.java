@@ -42,8 +42,8 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
         this.predictHour = (String) stepExecution.getJobExecution().getJobParameters().getParameters().get("predictHour").getValue();
         this.isCompleted = false;
         this.buffer.clear();
-        currentAltitudeIndex = 0;
-        log.info("ClimateReader initialized with currentAltitudeIndex: {}", currentAltitudeIndex);
+        this.currentAltitudeIndex = 0;
+        log.info("[{}][{}][{}][{}]", timestamp, predictHour, isCompleted, currentAltitudeIndex);
     }
 
     @Override
