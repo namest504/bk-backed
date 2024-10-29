@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface BalloonPositionRepository extends JpaRepository<BalloonPosition, Long> {
 
-    @Query("SELECT bp FROM BalloonPosition bp WHERE FUNCTION('TIMESTAMPDIFF', HOUR, bp.startPredictionTime, CURRENT_TIMESTAMP) <= 12 ORDER BY bp.startPredictionTime DESC")
+    @Query("""
+            SELECT bp 
+            FROM BalloonPosition bp 
+//            WHERE FUNCTION('TIMESTAMPDIFF', HOUR, bp.startPredictionTime, CURRENT_TIMESTAMP) <= 12 ORDER BY bp.startPredictionTime DESC
+            """)
     List<BalloonPosition> findPositionsWithinLast12Hours();
 }
