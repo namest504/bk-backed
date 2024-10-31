@@ -1,5 +1,6 @@
-package k_paas.balloon.keeper.global.annotation;
+package k_paas.balloon.keeper.global.resolver;
 
+import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
 import k_paas.balloon.keeper.global.exception.InvalidAPIKeyException;
 import k_paas.balloon.keeper.global.property.ApiKeyProperty;
 import lombok.RequiredArgsConstructor;

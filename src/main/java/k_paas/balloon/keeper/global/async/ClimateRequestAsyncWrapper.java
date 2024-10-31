@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ClimateRequestAsyncService {
+public class ClimateRequestAsyncWrapper {
 
     private final ClimateClient climateClient;
 

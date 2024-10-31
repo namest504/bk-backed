@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.global.async;
+package k_paas.balloon.keeper.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

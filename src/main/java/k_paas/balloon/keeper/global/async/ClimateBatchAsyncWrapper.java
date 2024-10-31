@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
-public class ClimateBatchAsyncService {
+public class ClimateBatchAsyncWrapper {
 
     private final ClimateBatchRunner climateBatchRunner;
 
