@@ -1,6 +1,6 @@
 package k_paas.balloon.keeper.infrastructure.persistence.repository;
 
-import k_paas.balloon.keeper.application.domain.balloon.dto.BalloonReportWithCount;
+import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReportWithCount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

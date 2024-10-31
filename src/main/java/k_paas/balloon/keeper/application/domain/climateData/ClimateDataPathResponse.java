@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.application.domain.climateData.dto;
+package k_paas.balloon.keeper.application.domain.climateData;
 
 public record ClimateDataPathResponse(
         String dataPath

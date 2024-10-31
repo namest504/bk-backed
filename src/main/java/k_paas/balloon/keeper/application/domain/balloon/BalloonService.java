@@ -1,142 +1,27 @@
 package k_paas.balloon.keeper.application.domain.balloon;
 
-import k_paas.balloon.keeper.application.domain.balloon.dto.*;
-import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
-import k_paas.balloon.keeper.global.exception.NotFoundException;
-import k_paas.balloon.keeper.global.exception.UnsupportedImageTypeException;
-import k_paas.balloon.keeper.global.util.ImageValidateUtil;
-import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
-import k_paas.balloon.keeper.infrastructure.client.SimulationImageDto;
-import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
-import k_paas.balloon.keeper.infrastructure.persistence.repository.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import k_paas.balloon.keeper.application.domain.balloon.comment.dto.BalloonCommentRequest;
+import k_paas.balloon.keeper.application.domain.balloon.comment.dto.BalloonCommentResponse;
+import k_paas.balloon.keeper.application.domain.balloon.position.dto.BalloonPositionResponse;
+import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReportDto;
+import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReportRequest;
+import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReportWithCount;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static k_paas.balloon.keeper.global.exception.InternalServiceConnectionException.NCP_OBJECT_STORAGE;
-import static k_paas.balloon.keeper.global.exception.NotFoundException.LOCAL_FILE;
-import static k_paas.balloon.keeper.global.exception.NotFoundException.REQUEST;
+public interface BalloonService {
+    List<BalloonPositionResponse> findAll();
 
-@Slf4j
-@Service
-@RequiredArgsConstructor
-public class BalloonService {
+    PagedModel<BalloonCommentResponse> getPagedComments(Long balloonPositionId, Pageable pageable);
 
-    private final BalloonPositionRepository balloonPositionRepository;
-    private final BalloonCommentRepository balloonCommentRepository;
-    private final SimulationClient simulationClient;
-    private final BalloonReportRepository balloonReportRepository;
-    private final NcpObjectStorageService ncpObjectStorageService;
+    void createComment(Long balloonPositionId, BalloonCommentRequest request);
 
-    @Transactional(readOnly = true)
-    public List<BalloonPositionResponse> findAll() {
-        return balloonPositionRepository.findPositionsWithinLast12Hours()
-                .stream()
-                .map(BalloonPositionResponse::from)
-                .collect(Collectors.toList());
-    }
+    String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request);
 
-    @Transactional(readOnly = true)
-    public PagedModel<BalloonCommentResponse> getPagedComments(Long balloonPositionId, Pageable pageable) {
-        final Page<BalloonComment> balloonCommentPage = balloonCommentRepository.findAllCommentsWithPagination(balloonPositionId, pageable);
-        List<BalloonCommentResponse> balloonCommentResponses = balloonCommentPage.stream()
-                .map(BalloonCommentResponse::from)
-                .collect(Collectors.toList());
+    List<BalloonReportDto> getReportedBalloon(List<String> reportedBalloonSerialCodes);
 
-        return new PagedModel<>(
-                new PageImpl<>(
-                        balloonCommentResponses,
-                        pageable,
-                        balloonCommentPage.getTotalElements()
-                ));
-    }
-
-    @Transactional
-    public void createComment(Long balloonPositionId, BalloonCommentRequest request) {
-        final BalloonPosition balloonPosition = balloonPositionRepository.findById(balloonPositionId)
-                .orElseThrow(() -> new NotFoundException(REQUEST));
-
-        balloonCommentRepository.save(
-                BalloonComment.builder()
-                        .balloonPosition(balloonPosition)
-                        .content(request.content())
-                        .build()
-        );
-    }
-
-    @Transactional
-    public String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request) {
-        if (!ImageValidateUtil.isImage(file)) {
-            throw new UnsupportedImageTypeException();
-        }
-        String objectKey = generateNcpObjectKey(file);
-        if(objectKey == null) {
-            throw new InternalServiceConnectionException(NCP_OBJECT_STORAGE);
-        }
-        BalloonReport balloonReport = balloonReportRepository.save(
-                BalloonReport.builder()
-                        .imagePath(objectKey)
-                        .reportedLatitude(request.latitude())
-                        .reportedLongitude(request.longitude())
-                        .reportTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
-                        .build()
-        );
-
-        simulationClient.fetchImage(
-                SimulationImageDto.of(
-                        balloonReport.getId(),
-                        balloonReport.getSerialCode(),
-                        objectKey
-                )
-        );
-        return balloonReport.getSerialCode();
-    }
-
-    @Transactional(readOnly = true)
-    public List<BalloonReportDto> getReportedBalloon(List<String> reportedBalloonSerialCodes) {
-        List<BalloonReport> balloonReportsBySerialCodes = balloonReportRepository.findBalloonReportsBySerialCodes(reportedBalloonSerialCodes);
-        return balloonReportsBySerialCodes.stream()
-                .map(BalloonReportDto::from)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<BalloonReportWithCount> getReportBalloonCount() {
-        return balloonReportRepository.findBalloonReportsWithCount();
-    }
-
-    private String generateNcpObjectKey(MultipartFile file) {
-        String objectKey = null;
-        File tempFile = null;
-        try {
-            tempFile = createTempFile(file.getOriginalFilename());
-            file.transferTo(tempFile);
-            objectKey = ncpObjectStorageService.putObject(tempFile.getAbsolutePath(), "reportImage");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new NotFoundException(LOCAL_FILE);
-        } finally {
-            if (tempFile != null && tempFile.exists()) {
-                tempFile.delete();
-            }
-        }
-        return objectKey;
-    }
-
-    private File createTempFile(String originalFilename) throws IOException {
-        return File.createTempFile("temp-", originalFilename);
-    }
+    List<BalloonReportWithCount> getReportBalloonCount();
 }
