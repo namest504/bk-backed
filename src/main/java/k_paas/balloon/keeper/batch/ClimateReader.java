@@ -1,6 +1,6 @@
 package k_paas.balloon.keeper.batch;
 
-import k_paas.balloon.keeper.global.async.ClimateAsyncService;
+import k_paas.balloon.keeper.global.async.ClimateRequestAsyncService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
@@ -26,10 +26,10 @@ public class ClimateReader implements ItemReader<List<ClimateDataDto>>, StepExec
     private String predictHour;
     private List<ClimateDataDto> buffer = new ArrayList<>();
 
-    private final ClimateAsyncService climateAsyncService;
+    private final ClimateRequestAsyncService climateRequestAsyncService;
 
-    public ClimateReader(ClimateAsyncService climateAsyncService) {
-        this.climateAsyncService = climateAsyncService;
+    public ClimateReader(ClimateRequestAsyncService climateRequestAsyncService) {
+        this.climateRequestAsyncService = climateRequestAsyncService;
     }
 
     /**
@@ -110,7 +110,7 @@ public class ClimateReader implements ItemReader<List<ClimateDataDto>>, StepExec
      * @return
      */
     private CompletableFuture<String[][]> sendClimateRequest(int parameterIndex, int altitude, String predictHour, String timeStamp) {
-        return climateAsyncService.sendRequest(
+        return climateRequestAsyncService.sendRequest(
                 String.valueOf(parameterIndex),
                 String.valueOf(ISOBARIC_ALTITUDE[altitude]),
                 predictHour,

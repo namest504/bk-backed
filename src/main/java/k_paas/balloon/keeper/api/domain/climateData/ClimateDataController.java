@@ -2,7 +2,7 @@ package k_paas.balloon.keeper.api.domain.climateData;
 
 import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
 import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
-import k_paas.balloon.keeper.global.async.ClimateAsyncService;
+import k_paas.balloon.keeper.global.async.ClimateBatchAsyncService;
 import k_paas.balloon.keeper.global.exception.InvalidAPIKeyException;
 import k_paas.balloon.keeper.global.property.ApiKeyProperty;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ClimateDataController {
 
     private final ClimateDataService climateDataService;
     private final ApiKeyProperty apiKeyProperty;
-    private final ClimateAsyncService climateAsyncService;
+    private final ClimateBatchAsyncService climateBatchAsyncService;
 
     @ValidAPIKey
     @GetMapping("/data-path")
@@ -61,7 +61,7 @@ public class ClimateDataController {
             @RequestParam String utcTime,
             @RequestParam String predictHour
     ) {
-        climateAsyncService.runBatch(utcTime, predictHour);
+        climateBatchAsyncService.runBatch(utcTime, predictHour);
 
         return ResponseEntity.status(ACCEPTED)
                 .build();
