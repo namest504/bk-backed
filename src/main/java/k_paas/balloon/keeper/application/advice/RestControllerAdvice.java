@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.advice;
+package k_paas.balloon.keeper.application.advice;
 
 import jakarta.validation.ConstraintViolationException;
 import k_paas.balloon.keeper.global.exception.BkException;

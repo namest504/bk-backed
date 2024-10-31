@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.domain.balloon.dto;
+package k_paas.balloon.keeper.application.domain.balloon.dto;
 
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.PageRequest;

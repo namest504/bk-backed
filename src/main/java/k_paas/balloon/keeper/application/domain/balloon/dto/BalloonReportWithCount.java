@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.domain.balloon.dto;
+package k_paas.balloon.keeper.application.domain.balloon.dto;
 
 public record BalloonReportWithCount(
         Double centerLatitude,

@@ -1,6 +1,6 @@
-package k_paas.balloon.keeper.api.domain.balloon;
+package k_paas.balloon.keeper.application.domain.balloon;
 
-import k_paas.balloon.keeper.api.domain.balloon.dto.*;
+import k_paas.balloon.keeper.application.domain.balloon.dto.*;
 import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import k_paas.balloon.keeper.global.exception.NotFoundException;
 import k_paas.balloon.keeper.global.exception.NotImageTypeException;

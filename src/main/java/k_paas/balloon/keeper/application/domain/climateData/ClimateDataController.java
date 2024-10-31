@@ -1,6 +1,6 @@
-package k_paas.balloon.keeper.api.domain.climateData;
+package k_paas.balloon.keeper.application.domain.climateData;
 
-import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
+import k_paas.balloon.keeper.application.domain.climateData.dto.ClimateDataPathResponse;
 import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
 import k_paas.balloon.keeper.global.async.ClimateBatchAsyncWrapper;
 import lombok.RequiredArgsConstructor;
