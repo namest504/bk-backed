@@ -1,6 +1,7 @@
 package k_paas.balloon.keeper.api.domain.climateData;
 
 import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
+import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
 import k_paas.balloon.keeper.global.async.ClimateAsyncService;
 import k_paas.balloon.keeper.global.exception.InvalidAPIKeyException;
 import k_paas.balloon.keeper.global.property.ApiKeyProperty;
@@ -22,6 +23,7 @@ public class ClimateDataController {
     private final ApiKeyProperty apiKeyProperty;
     private final ClimateAsyncService climateAsyncService;
 
+    @ValidAPIKey
     @GetMapping("/data-path")
     public ResponseEntity<ClimateDataPathResponse> getResentBatchedCsvPath(@RequestHeader(value = "BK-API-KEY") String apiKey) {
 
@@ -35,12 +37,9 @@ public class ClimateDataController {
                 .body(recentCsvFilePath);
     }
 
+    @ValidAPIKey
     @GetMapping("/simulation/init")
-    public ResponseEntity<Void> initLearning(@RequestHeader(value = "BK-API-KEY") String apiKey) {
-
-        if (apiKey == null || !apiKey.equals(apiKeyProperty.key())) {
-            throw new InvalidAPIKeyException();
-        }
+    public ResponseEntity<Void> initLearning() {
 
         climateDataService.initLearning();
 
@@ -56,15 +55,12 @@ public class ClimateDataController {
      * CompletableFuture runSync를 통해 내부 배치 로직을 비동기로 수행
      * Client에 응답을 바로 전달해주는 방법을 통해 문제 해결
      */
+    @ValidAPIKey
     @GetMapping("/batch/init")
     public ResponseEntity<Void> initBatchJob(
-            @RequestHeader(value = "BK-API-KEY") String apiKey,
             @RequestParam String utcTime,
             @RequestParam String predictHour
     ) {
-        if (apiKey == null || !apiKey.equals(apiKeyProperty.key())) {
-            throw new InvalidAPIKeyException();
-        }
         climateAsyncService.runBatch(utcTime, predictHour);
 
         return ResponseEntity.status(ACCEPTED)
