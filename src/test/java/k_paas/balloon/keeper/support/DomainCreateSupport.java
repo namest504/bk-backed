@@ -1,6 +1,7 @@
 package k_paas.balloon.keeper.support;
 
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPosition;
+import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReport;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -63,5 +64,64 @@ public class DomainCreateSupport {
         startPredictionTimeField.set(balloonPosition, startPredictionTime);
 
         return balloonPosition;
+    }
+
+    public static BalloonReport createBalloonReport(
+            Long id,
+            String serialCode,
+            String imagePath,
+            Boolean isCheckedStatus,
+            Double reportedLatitude,
+            Double reportedLongitude,
+            Double centerLatitude,
+            Double centerLongitude,
+            String streetAddress,
+            LocalDateTime createdAt) throws Exception {
+
+        Constructor<BalloonReport> constructor = BalloonReport.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        BalloonReport balloonReport = constructor.newInstance();
+
+        Field idField = BalloonReport.class.getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(balloonReport, id);
+
+        Field serialCodeField = BalloonReport.class.getDeclaredField("serialCode");
+        serialCodeField.setAccessible(true);
+        serialCodeField.set(balloonReport, serialCode);
+
+        Field imagePathField = BalloonReport.class.getDeclaredField("imagePath");
+        imagePathField.setAccessible(true);
+        imagePathField.set(balloonReport, imagePath);
+
+        Field isCheckedStatusField = BalloonReport.class.getDeclaredField("isCheckedStatus");
+        isCheckedStatusField.setAccessible(true);
+        isCheckedStatusField.set(balloonReport, isCheckedStatus);
+
+        Field reportedLatitudeField = BalloonReport.class.getDeclaredField("reportedLatitude");
+        reportedLatitudeField.setAccessible(true);
+        reportedLatitudeField.set(balloonReport, reportedLatitude);
+
+        Field reportedLongitudeField = BalloonReport.class.getDeclaredField("reportedLongitude");
+        reportedLongitudeField.setAccessible(true);
+        reportedLongitudeField.set(balloonReport, reportedLongitude);
+
+        Field centerLatitudeField = BalloonReport.class.getDeclaredField("centerLatitude");
+        centerLatitudeField.setAccessible(true);
+        centerLatitudeField.set(balloonReport, centerLatitude);
+
+        Field centerLongitudeField = BalloonReport.class.getDeclaredField("centerLongitude");
+        centerLongitudeField.setAccessible(true);
+        centerLongitudeField.set(balloonReport, centerLongitude);
+
+        Field streetAddressField = BalloonReport.class.getDeclaredField("streetAddress");
+        streetAddressField.setAccessible(true);
+        streetAddressField.set(balloonReport, streetAddress);
+
+        Field createdAtField = BalloonReport.class.getDeclaredField("createdAt");
+        createdAtField.setAccessible(true);
+        createdAtField.set(balloonReport, createdAt);
+
+        return balloonReport;
     }
 }

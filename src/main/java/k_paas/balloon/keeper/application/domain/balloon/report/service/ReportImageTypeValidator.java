@@ -1,5 +1,6 @@
-package k_paas.balloon.keeper.global.util;
+package k_paas.balloon.keeper.application.domain.balloon.report.service;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -8,15 +9,12 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class ImageValidateUtil {
-    /**
-     * Util 클래스 인스턴스화 방지
-     */
-    private ImageValidateUtil() {
-    }
+@Component
+public class ReportImageTypeValidator {
+
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
 
-    public static boolean isImage(MultipartFile file) {
+    public boolean isImage(MultipartFile file) {
         if (file.isEmpty()) {
             return false;
         }

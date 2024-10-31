@@ -6,6 +6,7 @@ import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonCommen
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonCommentRepository;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPosition;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPositionRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static k_paas.balloon.keeper.support.DomainCreateSupport.createBalloonPosition;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,8 +34,9 @@ class BalloonCommentServiceTest {
     @InjectMocks
     private BalloonCommentService balloonCommentService;
 
+    @DisplayName("댓글을 작성할 때 유효한 요청이 주어지면 댓글 저장")
     @Test
-    void givenValidRequest_whenCreateComment_ThenShouldPersistComment() throws Exception {
+    void findById_whenCreateComment_ThenShouldPersistComment() throws Exception {
         // Given
         Long validBalloonPositionId = 2L;
         String validContent = "testComment";
@@ -57,8 +60,8 @@ class BalloonCommentServiceTest {
                         190051)
         );
 
-        when(balloonPositionRepository.findById(validBalloonPositionId))    // mocked repository response
-                .thenReturn(Optional.of(validBalloonPosition));
+        given(balloonPositionRepository.findById(validBalloonPositionId))    // mocked repository response
+                .willReturn(Optional.of(validBalloonPosition));
 
         // When
         balloonCommentService.createComment(validBalloonPositionId, validRequest);
@@ -67,8 +70,9 @@ class BalloonCommentServiceTest {
         verify(balloonCommentRepository, times(1)).save(any(BalloonComment.class));    // validate repository was called
     }
 
+    @DisplayName("댓글을 생성할 때 잘못된 위치 ID가 제공되면 NotFound 예외 발생")
     @Test
-    void givenInvalidPositionId_whenCreateComment_thenShouldThrowNotFoundException() {
+    void findById_whenCreateComment_thenShouldThrowNotFoundException() {
         // Given
         Long invalidBalloonPositionId = 3L;
         String validContent = "This is a valid comment.";

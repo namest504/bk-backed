@@ -6,7 +6,6 @@ import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReport
 import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import k_paas.balloon.keeper.global.exception.NotFoundException;
 import k_paas.balloon.keeper.global.exception.UnsupportedImageTypeException;
-import k_paas.balloon.keeper.global.util.ImageValidateUtil;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.client.SimulationImageDto;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
@@ -36,10 +35,11 @@ public class BalloonReportService {
     private final BalloonReportRepository balloonReportRepository;
     private final SimulationClient simulationClient;
     private final NcpObjectStorageService ncpObjectStorageService;
+    private final ReportImageTypeValidator reportImageTypeValidator;
 
     @Transactional
     public String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request) {
-        if (!ImageValidateUtil.isImage(file)) {
+        if (!reportImageTypeValidator.isImage(file)) {
             throw new UnsupportedImageTypeException();
         }
         String objectKey = generateNcpObjectKey(file);
