@@ -8,6 +8,12 @@ import java.time.format.DateTimeFormatter;
 
 @Slf4j
 public class TimeUtil {
+    /**
+     * Util 클래스 인스턴스화 방지
+     */
+    private TimeUtil() {
+    }
+    
     public static String getCurrentTime() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHH");
         ZoneId utcZone = ZoneId.of("UTC");

@@ -9,6 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ImageValidateUtil {
+    /**
+     * Util 클래스 인스턴스화 방지
+     */
+    private ImageValidateUtil() {
+    }
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
 
     public static boolean isValidImage(MultipartFile file) {
