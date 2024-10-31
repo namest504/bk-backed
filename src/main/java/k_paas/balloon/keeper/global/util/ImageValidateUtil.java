@@ -16,7 +16,7 @@ public class ImageValidateUtil {
     }
     private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
 
-    public static boolean isValidImage(MultipartFile file) {
+    public static boolean isImage(MultipartFile file) {
         if (file.isEmpty()) {
             return false;
         }

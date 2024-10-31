@@ -79,7 +79,7 @@ public class BalloonService {
 
     @Transactional
     public String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request) {
-        if (!ImageValidateUtil.isValidImage(file)) {
+        if (!ImageValidateUtil.isImage(file)) {
             throw new UnsupportedImageTypeException();
         }
         String objectKey = generateNcpObjectKey(file);

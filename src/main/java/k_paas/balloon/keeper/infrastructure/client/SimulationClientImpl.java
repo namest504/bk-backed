@@ -18,8 +18,14 @@ import static k_paas.balloon.keeper.global.exception.InternalServiceConnectionEx
 @Component
 public class SimulationClientImpl implements SimulationClient{
 
-//    private final static String API_URL = "http://my-simulation-server-service:8001";
     private final static String API_URL = "http://my-detection-server-service:8003";
+
+    private static final String CLIMATE_DATA = "/climate-data";
+    private static final String CLIMATE_DATA_PARAM = "object_name";
+    private static final String CLIMATE_DATA_GET = "/climate-data-get";
+    private static final String API_PROCESS_IMAGE = "/api/process-image";
+
+
     private final RestTemplate restTemplate;
 
     public SimulationClientImpl(RestTemplate restTemplate) {
@@ -28,8 +34,8 @@ public class SimulationClientImpl implements SimulationClient{
 
     public void sendObjectPath(String path) {
         URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .path("/climate-data")
-                .queryParam("object_name", path)
+                .path(CLIMATE_DATA)
+                .queryParam(CLIMATE_DATA_PARAM, path)
                 .build()
                 .toUri();
         log.info("request url: [{}]", uri);
@@ -47,7 +53,7 @@ public class SimulationClientImpl implements SimulationClient{
     @Override
     public void initiateLearningProcess() {
         URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .path("/climate-data-get")
+                .path(CLIMATE_DATA_GET)
                 .build()
                 .toUri();
         log.info("request url: [{}]", uri);
@@ -65,7 +71,7 @@ public class SimulationClientImpl implements SimulationClient{
     @Override
     public void fetchImage(SimulationImageDto simulationImageDto) {
         URI uri = UriComponentsBuilder.fromHttpUrl(API_URL)
-                .path("/api/process-image")
+                .path(API_PROCESS_IMAGE)
                 .build()
                 .toUri();
 
