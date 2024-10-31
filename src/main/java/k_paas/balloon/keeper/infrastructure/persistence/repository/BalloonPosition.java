@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -40,7 +40,7 @@ public class BalloonPosition {
     private String status;
 
     @Column(name = "start_prediction_time")
-    private Instant startPredictionTime;
+    private LocalDateTime startPredictionTime;
 
     @OneToMany(mappedBy = "balloonPosition", fetch = FetchType.LAZY)
     List<BalloonComment> balloonComments;
@@ -53,7 +53,7 @@ public class BalloonPosition {
             Double risk,
             Integer reportCount,
             String status,
-            Instant startPredictionTime) {
+            LocalDateTime startPredictionTime) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.administrativeDistrict = administrativeDistrict;

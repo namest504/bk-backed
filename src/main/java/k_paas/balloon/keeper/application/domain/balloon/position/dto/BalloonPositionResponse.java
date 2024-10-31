@@ -2,7 +2,7 @@ package k_paas.balloon.keeper.application.domain.balloon.position.dto;
 
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPosition;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record BalloonPositionResponse(
         Long id,
@@ -13,7 +13,7 @@ public record BalloonPositionResponse(
         Double risk,
         Integer reportCount,
         String status,
-        Instant startPredictionTime
+        LocalDateTime startPredictionTime
 ) {
     public static BalloonPositionResponse from(BalloonPosition balloonPosition) {
         return new BalloonPositionResponse(
