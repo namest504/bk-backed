@@ -1,6 +1,6 @@
 package k_paas.balloon.keeper.global.config;
 
-import k_paas.balloon.keeper.global.resolver.ApiKeyInterceptor;
+import k_paas.balloon.keeper.global.interceptor.ApiKeyInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
