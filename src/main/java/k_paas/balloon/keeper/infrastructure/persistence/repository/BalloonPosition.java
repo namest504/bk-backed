@@ -44,23 +44,4 @@ public class BalloonPosition {
 
     @OneToMany(mappedBy = "balloonPosition", fetch = FetchType.LAZY)
     List<BalloonComment> balloonComments;
-
-    public BalloonPosition(
-            Double latitude,
-            Double longitude,
-            String administrativeDistrict,
-            String districtCode,
-            Double risk,
-            Integer reportCount,
-            String status,
-            LocalDateTime startPredictionTime) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.administrativeDistrict = administrativeDistrict;
-        this.districtCode = districtCode;
-        this.risk = risk;
-        this.reportCount = reportCount;
-        this.status = status;
-        this.startPredictionTime = startPredictionTime;
-    }
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -71,8 +72,7 @@ public class BalloonReport {
     private BalloonReport(
             String imagePath,
             Double reportedLatitude,
-            Double reportedLongitude,
-            LocalDateTime reportTime
+            Double reportedLongitude
     ) {
         this.imagePath = imagePath;
         this.serialCode = CodeGenerateUtil.generateCode();
@@ -82,6 +82,6 @@ public class BalloonReport {
         this.centerLatitude = null; // 초기 생성시 null로 생성
         this.centerLongitude = null; // 초기 생성시 null로 생성
         this.streetAddress = null; // 초기 생성시 null로 생성
-        this.createdAt = reportTime;
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }

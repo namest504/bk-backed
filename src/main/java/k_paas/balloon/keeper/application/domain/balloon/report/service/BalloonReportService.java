@@ -19,8 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,6 @@ public class BalloonReportService {
                         .imagePath(objectKey)
                         .reportedLatitude(request.latitude())
                         .reportedLongitude(request.longitude())
-                        .reportTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")))
                         .build()
         );
 
