@@ -3,12 +3,14 @@ package k_paas.balloon.keeper.api.domain.climateData;
 import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
 import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
 import k_paas.balloon.keeper.global.async.ClimateBatchAsyncWrapper;
-import k_paas.balloon.keeper.global.exception.InvalidAPIKeyException;
 import k_paas.balloon.keeper.global.property.ApiKeyProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
 import static org.springframework.http.HttpStatus.OK;
@@ -25,11 +27,7 @@ public class ClimateDataController {
 
     @ValidAPIKey
     @GetMapping("/data-path")
-    public ResponseEntity<ClimateDataPathResponse> getResentBatchedCsvPath(@RequestHeader(value = "BK-API-KEY") String apiKey) {
-
-        if (apiKey == null || !apiKey.equals(apiKeyProperty.key())) {
-            throw new InvalidAPIKeyException();
-        }
+    public ResponseEntity<ClimateDataPathResponse> getResentBatchedCsvPath() {
 
         final ClimateDataPathResponse recentCsvFilePath = climateDataService.getRecentCsvFilePath();
 
