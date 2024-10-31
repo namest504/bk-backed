@@ -16,7 +16,7 @@ import static k_paas.balloon.keeper.batch.ClimateContants.*;
 
 @Slf4j
 @Component
-public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>, StepExecutionListener {
+public class ClimateReader implements ItemReader<List<ClimateDataDto>>, StepExecutionListener {
 
     private static final int CHUNK_SIZE = 100;
 
@@ -24,7 +24,7 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
     private boolean isCompleted = false;
     private String timestamp;
     private String predictHour;
-    private List<UpdateClimateServiceSpec> buffer = new ArrayList<>();
+    private List<ClimateDataDto> buffer = new ArrayList<>();
 
     private final ClimateAsyncService climateAsyncService;
 
@@ -47,13 +47,13 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
     }
 
     @Override
-    public List<UpdateClimateServiceSpec> read() {
+    public List<ClimateDataDto> read() {
         // 작업이 끝났다면 null 처리
         if (isCompleted) {
             return null;
         }
 
-        List<UpdateClimateServiceSpec> chunk = new ArrayList<>();
+        List<ClimateDataDto> chunk = new ArrayList<>();
 
         while (chunk.size() < CHUNK_SIZE && !isCompleted) {
             if (buffer.isEmpty()) {
@@ -87,16 +87,16 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param timeStamp
      * @return
      */
-    private List<UpdateClimateServiceSpec> processClimateData(int altitude, String predictHour, String timeStamp) {
+    private List<ClimateDataDto> processClimateData(int altitude, String predictHour, String timeStamp) {
         CompletableFuture<String[][]> completableUVectors = sendClimateRequest(2002, altitude, predictHour, timeStamp);
         CompletableFuture<String[][]> completableVVectors = sendClimateRequest(2003, altitude, predictHour, timeStamp);
 
-        List<UpdateClimateServiceSpec> result = CompletableFuture.allOf(completableUVectors, completableVVectors)
+        List<ClimateDataDto> result = CompletableFuture.allOf(completableUVectors, completableVVectors)
                 .thenApply(r -> {
                     String[][] uVectorArray = completableUVectors.join();
                     String[][] vVectorArray = completableVVectors.join();
-                    List<UpdateClimateServiceSpec> updateClimateServiceSpecs = saveClimateData(altitude, uVectorArray, vVectorArray);
-                    return updateClimateServiceSpecs;
+                    List<ClimateDataDto> climateDataDtos = saveClimateData(altitude, uVectorArray, vVectorArray);
+                    return climateDataDtos;
                 }).join();
         return result;
     }
@@ -126,8 +126,8 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param vVectorArray
      * @return
      */
-    private List<UpdateClimateServiceSpec> saveClimateData(int altitude, String[][] uVectorArray, String[][] vVectorArray) {
-        List<UpdateClimateServiceSpec> result = new ArrayList<>();
+    private List<ClimateDataDto> saveClimateData(int altitude, String[][] uVectorArray, String[][] vVectorArray) {
+        List<ClimateDataDto> result = new ArrayList<>();
 
         // TODO: Y 마지막 인덱스 데이터 null 발생
         for (int y = 0; y < ARRAY_Y_INDEX - 1; y++) {
@@ -148,8 +148,8 @@ public class ClimateReader implements ItemReader<List<UpdateClimateServiceSpec>>
      * @param vVectorArray
      * @return
      */
-    private UpdateClimateServiceSpec createUpdateClimateSpec(int y, int x, int altitude, String[][] uVectorArray, String[][] vVectorArray) {
-        UpdateClimateServiceSpec spec = UpdateClimateServiceSpec.builder()
+    private ClimateDataDto createUpdateClimateSpec(int y, int x, int altitude, String[][] uVectorArray, String[][] vVectorArray) {
+        ClimateDataDto spec = ClimateDataDto.builder()
                 .y(y)
                 .x(x)
                 .pressure(ISOBARIC_ALTITUDE[altitude])

@@ -54,7 +54,7 @@ public class ClimateJobConfig {
     @Bean
     public Step processClimateDataStep() {
         return new StepBuilder("processClimateDataStep", jobRepository)
-                .<List<UpdateClimateServiceSpec>, List<UpdateClimateServiceSpec>>chunk(10, transactionManager)
+                .<List<ClimateDataDto>, List<ClimateDataDto>>chunk(10, transactionManager)
                 .reader(climateReader)
                 .writer(climateWriter)
                 .build();

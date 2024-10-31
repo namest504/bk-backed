@@ -1,9 +1,5 @@
 package k_paas.balloon.keeper.batch;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -13,10 +9,15 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
 @Slf4j
 @Component
 @Getter
-public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>>, StepExecutionListener {
+public class ClimateWriter implements ItemWriter<List<ClimateDataDto>>, StepExecutionListener {
 
     private String csvFilePath;
 
@@ -26,10 +27,10 @@ public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>>
     }
 
     @Override
-    public void write(Chunk<? extends List<UpdateClimateServiceSpec>> climates) {
+    public void write(Chunk<? extends List<ClimateDataDto>> climates) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFilePath, true))) {
-            for (List<UpdateClimateServiceSpec> climateData : climates) {
-                for (UpdateClimateServiceSpec spec : climateData) {
+            for (List<ClimateDataDto> climateData : climates) {
+                for (ClimateDataDto spec : climateData) {
                     String csvLine = convertToCSV(spec);
                     writer.write(csvLine);
                     writer.newLine();
@@ -40,7 +41,7 @@ public class ClimateWriter implements ItemWriter<List<UpdateClimateServiceSpec>>
         }
     }
 
-    private String convertToCSV(UpdateClimateServiceSpec spec) {
+    private String convertToCSV(ClimateDataDto spec) {
         return String.format("%d,%d,%d,%s,%s",
                 spec.y(),
                 spec.x(),

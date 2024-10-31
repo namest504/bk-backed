@@ -1,6 +1,6 @@
 package k_paas.balloon.keeper.batch;
 
-public record UpdateClimateServiceSpec(
+public record ClimateDataDto(
         Integer y,
         Integer x,
         Integer pressure,
@@ -8,7 +8,7 @@ public record UpdateClimateServiceSpec(
         String vVector
 ) {
 
-    public UpdateClimateServiceSpec {
+    public ClimateDataDto {
         if (pressure != null && pressure < 0) {
             throw new IllegalArgumentException("Pressure cannot be negative");
         }
@@ -49,8 +49,8 @@ public record UpdateClimateServiceSpec(
             return this;
         }
 
-        public UpdateClimateServiceSpec build() {
-            return new UpdateClimateServiceSpec(y, x, pressure, uVector, vVector);
+        public ClimateDataDto build() {
+            return new ClimateDataDto(y, x, pressure, uVector, vVector);
         }
     }
 
