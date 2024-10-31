@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.domain.balloonPosition;
+package k_paas.balloon.keeper.infrastructure.persistence.repository;
 
 import jakarta.persistence.*;
 import k_paas.balloon.keeper.global.util.CodeGenerateUtil;

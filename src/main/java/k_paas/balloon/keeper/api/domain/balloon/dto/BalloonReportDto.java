@@ -1,4 +1,6 @@
-package k_paas.balloon.keeper.api.domain.balloonPosition;
+package k_paas.balloon.keeper.api.domain.balloon.dto;
+
+import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReport;
 
 import java.time.LocalDateTime;
 

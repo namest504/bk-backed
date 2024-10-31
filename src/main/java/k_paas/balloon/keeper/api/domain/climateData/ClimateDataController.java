@@ -1,5 +1,6 @@
 package k_paas.balloon.keeper.api.domain.climateData;
 
+import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
 import k_paas.balloon.keeper.batch.ClimateJobConfig;
 import k_paas.balloon.keeper.batch.ClimateSchedule;
 import k_paas.balloon.keeper.global.exception.InvalidAPIKeyException;

@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.api.domain.balloonPosition;
+package k_paas.balloon.keeper.api.domain.balloon.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

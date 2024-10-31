@@ -1,6 +1,5 @@
 package k_paas.balloon.keeper.infrastructure.persistence.repository;
 
-import k_paas.balloon.keeper.api.domain.balloonPosition.BalloonPosition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

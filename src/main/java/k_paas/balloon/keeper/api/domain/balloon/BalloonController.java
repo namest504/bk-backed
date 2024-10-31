@@ -1,6 +1,7 @@
-package k_paas.balloon.keeper.api.domain.balloonPosition;
+package k_paas.balloon.keeper.api.domain.balloon;
 
 import jakarta.validation.Valid;
+import k_paas.balloon.keeper.api.domain.balloon.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.web.PagedModel;

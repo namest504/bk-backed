@@ -1,5 +1,6 @@
-package k_paas.balloon.keeper.api.domain.balloonPosition;
+package k_paas.balloon.keeper.api.domain.balloon;
 
+import k_paas.balloon.keeper.api.domain.balloon.dto.*;
 import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import k_paas.balloon.keeper.global.exception.NotFoundException;
 import k_paas.balloon.keeper.global.exception.NotImageTypeException;
@@ -7,9 +8,7 @@ import k_paas.balloon.keeper.global.util.ImageValidateUtil;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.client.SimulationImageDto;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
-import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonCommentRepository;
-import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPositionRepository;
-import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReportRepository;
+import k_paas.balloon.keeper.infrastructure.persistence.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

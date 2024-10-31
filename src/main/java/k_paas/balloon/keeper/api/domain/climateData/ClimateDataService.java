@@ -1,5 +1,6 @@
 package k_paas.balloon.keeper.api.domain.climateData;
 
+import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.persistence.memory.ClimateDataInMemoryStore;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
