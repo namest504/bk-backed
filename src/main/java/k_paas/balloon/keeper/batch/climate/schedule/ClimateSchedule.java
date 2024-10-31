@@ -1,5 +1,8 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.climate.schedule;
 
+import k_paas.balloon.keeper.batch.climate.config.ClimateJobConfig;
+import k_paas.balloon.keeper.batch.climate.runner.ClimateBatchRunner;
+import k_paas.balloon.keeper.batch.climate.runner.ClimateRunnerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -24,6 +27,6 @@ public class ClimateSchedule {
      */
     @Scheduled(cron = "0 30 */6 * * *", zone = "UTC" )
     public void execute() {
-        climateBatchRunner.run(getCurrentTime(), "24");
+        climateBatchRunner.run(ClimateRunnerRequest.of(getCurrentTime(), "24"));
     }
 }

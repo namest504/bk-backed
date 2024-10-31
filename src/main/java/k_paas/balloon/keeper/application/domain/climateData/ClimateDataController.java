@@ -1,13 +1,15 @@
 package k_paas.balloon.keeper.application.domain.climateData;
 
+import jakarta.validation.Valid;
+import k_paas.balloon.keeper.batch.climate.runner.ClimateRunnerRequest;
 import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
 import k_paas.balloon.keeper.global.async.ClimateBatchAsyncWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.HttpStatus.ACCEPTED;
@@ -53,10 +55,9 @@ public class ClimateDataController {
     @ValidAPIKey
     @GetMapping("/batch/init")
     public ResponseEntity<Void> initBatchJob(
-            @RequestParam String utcTime,
-            @RequestParam String predictHour
+            @ModelAttribute @Valid ClimateRunnerRequest climateRunnerRequest
     ) {
-        climateBatchAsyncWrapper.runBatch(utcTime, predictHour);
+        climateBatchAsyncWrapper.runBatch(climateRunnerRequest);
 
         return ResponseEntity.status(ACCEPTED)
                 .build();

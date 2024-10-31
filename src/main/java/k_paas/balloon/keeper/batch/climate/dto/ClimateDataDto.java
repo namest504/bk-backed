@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.climate.dto;
 
 public record ClimateDataDto(
         Integer y,

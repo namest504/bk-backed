@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.util;
 
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.scope.context.ChunkContext;

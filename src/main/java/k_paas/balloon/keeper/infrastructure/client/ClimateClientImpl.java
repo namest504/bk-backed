@@ -11,8 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_X_INDEX;
-import static k_paas.balloon.keeper.batch.ClimateContants.ARRAY_Y_INDEX;
+import static k_paas.balloon.keeper.batch.util.ClimateContants.ARRAY_X_INDEX;
+import static k_paas.balloon.keeper.batch.util.ClimateContants.ARRAY_Y_INDEX;
 
 @Slf4j
 @Component

@@ -1,5 +1,6 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.climate.job;
 
+import k_paas.balloon.keeper.batch.climate.dto.ClimateDataDto;
 import k_paas.balloon.keeper.global.async.ClimateRequestAsyncWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static k_paas.balloon.keeper.batch.ClimateContants.*;
+import static k_paas.balloon.keeper.batch.util.ClimateContants.*;
 
 @Slf4j
 @Component

@@ -1,10 +1,7 @@
 package k_paas.balloon.keeper;
 
 import jakarta.annotation.PostConstruct;
-import k_paas.balloon.keeper.batch.ClimateJobConfig;
-import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,67 +17,27 @@ import java.util.TimeZone;
 @ConfigurationPropertiesScan
 public class Application {
 
-    private final JobLauncher jobLauncher;
-    private final ClimateJobConfig climateJobConfig;
-    private final NcpObjectStorageService ncpObjectStorageService;
-
-    public Application(JobLauncher jobLauncher, ClimateJobConfig climateJobConfig, NcpObjectStorageService ncpObjectStorageService) {
-        this.jobLauncher = jobLauncher;
-        this.climateJobConfig = climateJobConfig;
-        this.ncpObjectStorageService = ncpObjectStorageService;
-    }
-
-
-
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * 기본적으로 Asia/Seoul 시간대를 사용하도록 애플리케이션을 초기화
+     * JVM의 기본 시간대를 설정하고 시간대가 Asia/Seoul로 설정되었음을 로그로 남김
+     */
     @PostConstruct
     public void init() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
         log.info("The server time is set in Asia/Seoul");
     }
 
+    /**
+     * 시작 시 현재 서버 시간을 로그로 남김
+     */
     @Bean
     public ApplicationRunner run() {
         return args -> {
             log.info("The server time is {}", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         };
     }
-
-    /**
-     * Batch Process Development Test
-     */
-	/*@Bean
-	public ApplicationRunner runJobOnStartup() {
-		return args -> {
-            batchProcess();
-        };
-	}
-
-    private void batchProcess() {
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .toJobParameters();
-
-        try {
-            log.info("Application job excute in {}", LocalDateTime.now());
-            jobLauncher.run(climateJobConfig.climateJob(), jobParameters);
-        } catch (JobExecutionException e) {
-            log.error("Job 수행 실패 cause : {}", e.getMessage());
-        }
-    }*/
-
-    /**
-     * NCP Object Storage Download Test Method
-     */
-    /*@Bean
-    public ApplicationRunner run() {
-        return args -> {
-            log.info("download start");
-            ncpObjectStorageService.downloadObject();
-        };
-    }*/
 }

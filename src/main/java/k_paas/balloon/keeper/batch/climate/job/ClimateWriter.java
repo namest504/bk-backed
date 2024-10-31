@@ -1,5 +1,7 @@
-package k_paas.balloon.keeper.batch;
+package k_paas.balloon.keeper.batch.climate.job;
 
+import k_paas.balloon.keeper.batch.climate.dto.ClimateDataDto;
+import k_paas.balloon.keeper.batch.util.BatchContextUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
