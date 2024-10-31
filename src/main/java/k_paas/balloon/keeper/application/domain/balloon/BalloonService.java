@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -81,7 +82,7 @@ public class BalloonService {
         if (!ImageValidateUtil.isValidImage(file)) {
             throw new UnsupportedImageTypeException();
         }
-        String objectKey = getNcpObjectKey(file);
+        String objectKey = generateNcpObjectKey(file);
         if(objectKey == null) {
             throw new InternalServiceConnectionException(NCP_OBJECT_STORAGE);
         }
@@ -104,26 +105,6 @@ public class BalloonService {
         return balloonReport.getSerialCode();
     }
 
-    private String getNcpObjectKey(MultipartFile file) {
-        String objectKey = null;
-        try {
-            // 임시 파일 생성
-            File tempFile = File.createTempFile("temp-", file.getOriginalFilename());
-            file.transferTo(tempFile);
-
-            // 파일 경로를 사용하여 S3에 업로드
-            objectKey = ncpObjectStorageService.putObject(tempFile.getAbsolutePath(), "reportImage");
-
-            // 임시 파일 삭제
-            tempFile.delete();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new NotFoundException(LOCAL_FILE);
-        }
-
-        return objectKey;
-    }
-
     @Transactional(readOnly = true)
     public List<BalloonReportDto> getReportedBalloon(List<String> reportedBalloonSerialCodes) {
         List<BalloonReport> balloonReportsBySerialCodes = balloonReportRepository.findBalloonReportsBySerialCodes(reportedBalloonSerialCodes);
@@ -135,5 +116,27 @@ public class BalloonService {
     @Transactional(readOnly = true)
     public List<BalloonReportWithCount> getReportBalloonCount() {
         return balloonReportRepository.findBalloonReportsWithCount();
+    }
+
+    private String generateNcpObjectKey(MultipartFile file) {
+        String objectKey = null;
+        File tempFile = null;
+        try {
+            tempFile = createTempFile(file.getOriginalFilename());
+            file.transferTo(tempFile);
+            objectKey = ncpObjectStorageService.putObject(tempFile.getAbsolutePath(), "reportImage");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new NotFoundException(LOCAL_FILE);
+        } finally {
+            if (tempFile != null && tempFile.exists()) {
+                tempFile.delete();
+            }
+        }
+        return objectKey;
+    }
+
+    private File createTempFile(String originalFilename) throws IOException {
+        return File.createTempFile("temp-", originalFilename);
     }
 }
