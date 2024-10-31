@@ -13,7 +13,7 @@ public interface BalloonReportRepository extends JpaRepository<BalloonReport, Lo
     List<BalloonReport> findBalloonReportsBySerialCodes(@Param("serialCodes") List<String> serialCodes);
 
     @Query("""
-            select new k_paas.balloon.keeper.application.domain.balloon.dto.BalloonReportWithCount(br.centerLatitude, br.centerLongitude, br.streetAddress, count(br.id))
+            select new k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReportWithCount(br.centerLatitude, br.centerLongitude, br.streetAddress, count(br.id))
             from BalloonReport br
             where br.isCheckedStatus = true
             group by br.centerLatitude, br.centerLongitude, br.streetAddress
