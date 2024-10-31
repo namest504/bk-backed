@@ -15,6 +15,7 @@ public interface BalloonPositionRepository extends JpaRepository<BalloonPosition
 //            """)
 //    List<BalloonPosition> findPositionsWithinLast12Hours();
 
+    // 시연을 위해 임시로 12시간 조건 해제
     @Query("SELECT bp FROM BalloonPosition bp")
     List<BalloonPosition> findPositionsWithinLast12Hours();
 }
