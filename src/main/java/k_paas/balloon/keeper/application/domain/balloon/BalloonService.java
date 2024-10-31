@@ -3,7 +3,7 @@ package k_paas.balloon.keeper.application.domain.balloon;
 import k_paas.balloon.keeper.application.domain.balloon.dto.*;
 import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import k_paas.balloon.keeper.global.exception.NotFoundException;
-import k_paas.balloon.keeper.global.exception.NotImageTypeException;
+import k_paas.balloon.keeper.global.exception.UnsupportedImageTypeException;
 import k_paas.balloon.keeper.global.util.ImageValidateUtil;
 import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.client.SimulationImageDto;
@@ -79,7 +79,7 @@ public class BalloonService {
     @Transactional
     public String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request) {
         if (!ImageValidateUtil.isValidImage(file)) {
-            throw new NotImageTypeException();
+            throw new UnsupportedImageTypeException();
         }
         String objectKey = getNcpObjectKey(file);
         if(objectKey == null) {

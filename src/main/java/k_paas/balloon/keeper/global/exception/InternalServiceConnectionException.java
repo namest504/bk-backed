@@ -9,7 +9,7 @@ public class InternalServiceConnectionException extends BkException {
 
     private static final String Message = "내부 서비스 [%s] 와의 문제가 발생했습니다.";
 
-    public InternalServiceConnectionException(String serivceName) {
-        super(Message.formatted(serivceName));
+    public InternalServiceConnectionException(String serviceName) {
+        super(Message.formatted(serviceName));
     }
 }
