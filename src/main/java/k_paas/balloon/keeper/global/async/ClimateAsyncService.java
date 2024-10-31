@@ -23,7 +23,7 @@ public class ClimateAsyncService {
     }
 
     @Async("threadPoolTaskExecutor")
-    public Void runBatch(String utcTime, String predictHour) {
+    public void runBatch(String utcTime, String predictHour) {
         CompletableFuture.runAsync(() -> {
             climateBatchRunner.run(utcTime, predictHour);
         });
