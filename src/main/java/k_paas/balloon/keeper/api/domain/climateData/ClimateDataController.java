@@ -3,7 +3,6 @@ package k_paas.balloon.keeper.api.domain.climateData;
 import k_paas.balloon.keeper.api.domain.climateData.dto.ClimateDataPathResponse;
 import k_paas.balloon.keeper.global.annotation.ValidAPIKey;
 import k_paas.balloon.keeper.global.async.ClimateBatchAsyncWrapper;
-import k_paas.balloon.keeper.global.property.ApiKeyProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import static org.springframework.http.HttpStatus.OK;
 public class ClimateDataController {
 
     private final ClimateDataService climateDataService;
-    private final ApiKeyProperty apiKeyProperty;
     private final ClimateBatchAsyncWrapper climateBatchAsyncWrapper;
 
     @ValidAPIKey
