@@ -16,7 +16,6 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .components(new Components()
                         .addSecuritySchemes("api_key", new SecurityScheme()
