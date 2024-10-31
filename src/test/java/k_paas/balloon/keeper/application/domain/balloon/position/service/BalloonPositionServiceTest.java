@@ -3,6 +3,7 @@ package k_paas.balloon.keeper.application.domain.balloon.position.service;
 import k_paas.balloon.keeper.application.domain.balloon.position.dto.BalloonPositionResponse;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPosition;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonPositionRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ class BalloonPositionServiceTest {
     @InjectMocks
     private BalloonPositionService balloonPositionService;
 
+    @DisplayName("전체 조회 성공")
     @Test
     void findAllTest() throws Exception {
         // Given
