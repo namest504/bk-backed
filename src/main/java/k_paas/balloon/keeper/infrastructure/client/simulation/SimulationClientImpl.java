@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.infrastructure.client;
+package k_paas.balloon.keeper.infrastructure.client.simulation;
 
 import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import lombok.extern.slf4j.Slf4j;

@@ -3,6 +3,7 @@ package k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import k_paas.balloon.keeper.global.property.NcpProperty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

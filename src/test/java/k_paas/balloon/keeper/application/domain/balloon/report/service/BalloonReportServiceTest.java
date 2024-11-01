@@ -2,7 +2,7 @@ package k_paas.balloon.keeper.application.domain.balloon.report.service;
 
 import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReportRequest;
 import k_paas.balloon.keeper.global.exception.UnsupportedImageTypeException;
-import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
+import k_paas.balloon.keeper.infrastructure.client.simulation.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReport;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReportRepository;

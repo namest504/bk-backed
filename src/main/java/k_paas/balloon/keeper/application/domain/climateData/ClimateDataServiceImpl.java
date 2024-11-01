@@ -1,6 +1,6 @@
 package k_paas.balloon.keeper.application.domain.climateData;
 
-import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
+import k_paas.balloon.keeper.infrastructure.client.simulation.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.persistence.memory.ClimateDataInMemoryStore;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import lombok.RequiredArgsConstructor;

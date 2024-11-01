@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.infrastructure.client;
+package k_paas.balloon.keeper.infrastructure.client.simulation;
 
 public record SimulationImageDto(
         Long balloonReportId,

@@ -1,6 +1,6 @@
 package k_paas.balloon.keeper.global.async;
 
-import k_paas.balloon.keeper.infrastructure.client.ClimateClient;
+import k_paas.balloon.keeper.infrastructure.client.climate.ClimateClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;

@@ -1,5 +1,7 @@
-package k_paas.balloon.keeper.infrastructure.client;
+package k_paas.balloon.keeper.infrastructure.client.climate;
 
+import k_paas.balloon.keeper.global.property.ClimateApiKeyProperty;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,14 +18,12 @@ import static k_paas.balloon.keeper.batch.util.ClimateContants.ARRAY_Y_INDEX;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ClimateClientImpl implements ClimateClient {
 
     /* 기후 api url 문자열 생성 후, 통신과 결과 값 2차원 배열에 저장하는 함수 호출 */
     private final RestTemplate restTemplate;
-
-    public ClimateClientImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private final ClimateApiKeyProperty climateApiKeyProperty;
 
     public String[][] fetchGetClimateData(String varn, String level, String predictHour, String timeStamp) {
         String baseUrl = "https://apihub.kma.go.kr/api/typ06/cgi-bin/url/nph-um_grib_xy_txt1";
@@ -42,7 +42,7 @@ public class ClimateClientImpl implements ClimateClient {
                     .append("&" + encodeParam("map", "F")) /* 사용 영역 (F -> 자료 전체 영역) */
                     .append("&" + encodeParam("tmfc", timeStamp)) /* 분석 시간 */
                     .append("&" + encodeParam("hf", predictHour)) /* 예측 시간 (+00 hour) */
-                    .append("&" + encodeParam("authKey", "KolWTlbHQaqJVk5WxwGqnw")) /* 발급된 API 인증키 */
+                    .append("&" + encodeParam("authKey", climateApiKeyProperty.key())) /* 발급된 API 인증키 */
                     .toString();
         } catch (Exception e) {
             throw new RuntimeException("Error while building URL", e);

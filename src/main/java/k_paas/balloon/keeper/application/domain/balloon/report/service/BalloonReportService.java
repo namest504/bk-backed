@@ -6,8 +6,8 @@ import k_paas.balloon.keeper.application.domain.balloon.report.dto.BalloonReport
 import k_paas.balloon.keeper.global.exception.InternalServiceConnectionException;
 import k_paas.balloon.keeper.global.exception.NotFoundException;
 import k_paas.balloon.keeper.global.exception.UnsupportedImageTypeException;
-import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
-import k_paas.balloon.keeper.infrastructure.client.SimulationImageDto;
+import k_paas.balloon.keeper.infrastructure.client.simulation.SimulationClient;
+import k_paas.balloon.keeper.infrastructure.client.simulation.SimulationImageDto;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReport;
 import k_paas.balloon.keeper.infrastructure.persistence.repository.BalloonReportRepository;

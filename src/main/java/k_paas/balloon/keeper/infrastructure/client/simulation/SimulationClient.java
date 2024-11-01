@@ -1,4 +1,4 @@
-package k_paas.balloon.keeper.infrastructure.client;
+package k_paas.balloon.keeper.infrastructure.client.simulation;
 
 public interface SimulationClient {
 

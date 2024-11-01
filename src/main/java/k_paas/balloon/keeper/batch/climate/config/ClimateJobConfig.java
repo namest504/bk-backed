@@ -3,7 +3,7 @@ package k_paas.balloon.keeper.batch.climate.config;
 import k_paas.balloon.keeper.batch.climate.dto.ClimateDataDto;
 import k_paas.balloon.keeper.batch.climate.job.ClimateReader;
 import k_paas.balloon.keeper.batch.climate.job.ClimateWriter;
-import k_paas.balloon.keeper.infrastructure.client.SimulationClient;
+import k_paas.balloon.keeper.infrastructure.client.simulation.SimulationClient;
 import k_paas.balloon.keeper.infrastructure.persistence.memory.ClimateDataInMemoryStore;
 import k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp.NcpObjectStorageService;
 import lombok.RequiredArgsConstructor;
