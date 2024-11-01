@@ -15,6 +15,9 @@ public class ClimateRequestAsyncWrapper {
 
     private final ClimateClient climateClient;
 
+    /**
+     * 기후 데이터를 가져오기 위한 요청을 비동기식으로 보냄
+     */
     @Async("threadPoolTaskExecutor")
     public CompletableFuture<String[][]> sendRequest(String varn, String level, String predictHour, String timeStamp) {
         return CompletableFuture.completedFuture(climateClient.fetchGetClimateData(varn, level, predictHour, timeStamp));

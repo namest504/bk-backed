@@ -14,6 +14,9 @@ public class ClimateBatchAsyncWrapper {
 
     private final ClimateBatchRunner climateBatchRunner;
 
+    /**
+     * 기후 배치 작업을 비동기식으로 실행
+     */
     @Async("threadPoolTaskExecutor")
     public void runBatch(ClimateRunnerRequest request) {
         CompletableFuture.runAsync(() -> {

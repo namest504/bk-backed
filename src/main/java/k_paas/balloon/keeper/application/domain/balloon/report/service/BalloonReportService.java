@@ -35,6 +35,11 @@ public class BalloonReportService {
     private final NcpObjectStorageService ncpObjectStorageService;
     private final ReportImageTypeValidator reportImageTypeValidator;
 
+    /**
+     * 이미지 파일과 요청 데이터를 사용하여 새로운 풍선 신고 데이터를 저장
+     *
+     * @return 신고 풍선에 대한 일련 코드
+     */
     @Transactional
     public String createReportBalloonInitData(MultipartFile file, BalloonReportRequest request) {
         if (!reportImageTypeValidator.isImage(file)) {
@@ -62,6 +67,9 @@ public class BalloonReportService {
         return balloonReport.getSerialCode();
     }
 
+    /**
+     * 풍선 일련번호 목록을 기반으로 신고 풍선 목록을 검색
+     */
     @Transactional(readOnly = true)
     public List<BalloonReportDto> getReportedBalloon(List<String> reportedBalloonSerialCodes) {
         List<BalloonReport> balloonReportsBySerialCodes = balloonReportRepository.findBalloonReportsBySerialCodes(reportedBalloonSerialCodes);
@@ -75,6 +83,9 @@ public class BalloonReportService {
         return balloonReportRepository.findBalloonReportsWithCount();
     }
 
+    /**
+     * NCP Object Storage 에 파일을 저장하고 객체 접근 경로를 반환
+     */
     private String generateNcpObjectKey(MultipartFile file) {
         String objectKey = null;
         File tempFile = null;

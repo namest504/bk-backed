@@ -21,6 +21,10 @@ public class ClimateBatchRunner {
 
     private static final String DEFAULT_PREDICT_HOUR = "24";
 
+    /**
+     * 기후 데이터 배치 작업을 수행
+     * 수행 전 UTC 시간과 예측 시간은 작업을 시작하기 전에 검증
+     */
     public void run(ClimateRunnerRequest request) {
         String utcTime = getValidUtcTime(request.utcTime());
         String predictHour = getValidPredictHour(request.predictHour());

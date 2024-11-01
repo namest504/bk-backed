@@ -22,6 +22,14 @@ public class NcpObjectStorageService {
         this.amazonS3Client = amazonS3Client;
     }
 
+    /**
+     * NCP Object Storage 버킷의 지정된 경로에 객체를 저장
+     * 경로가 존재하지 않는 경우 폴더를 생성
+     *
+     * @param localFileName NCP Object Storage 버킷에 업로드할 로컬 파일의 이름
+     * @param path 객체가 저장될 버킷 내의 경로
+     * @return NCP Object Storage 버킷에 있는 객체의 전체 이름
+     */
     public String putObject(String localFileName, String path) {
         String folderName = path;
 
@@ -41,7 +49,6 @@ public class NcpObjectStorageService {
         }
 
         String objectName = folderName + localFileName;
-//                "climate_data_" + LocalTime.now(ZoneId.of("Asia/Seoul")) + ".csv";
 
         try {
             File file = new File(localFileName);
@@ -57,6 +64,11 @@ public class NcpObjectStorageService {
         return objectName;
     }
 
+    /**
+     * 지정된 파일의 크기를 확인
+     *
+     * @param file 크기를 검증할 파일
+     */
     private void validateFileSize(File file) {
         long fileSizeInBytes = file.length();
         double fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0);
@@ -68,6 +80,12 @@ public class NcpObjectStorageService {
         log.info("File size: {:.2f} MB", fileSizeInMB);
     }
 
+    /**
+     * NCP Object Storage 버킷내에 지정된 경로 내에서 최신 객체의 경로를 검색
+     *
+     * @param path 최신 객체를 검색하기 위한 S3 버킷의 접두사 경로
+     * @return 지정된 경로 내에서 발견된 최신 객체의 경로. 객체가 발견되지 않은 경우 null
+     */
     public String getLatestObjectPath(String path) {
         try {
             ListObjectsV2Request listObjectsRequest = new ListObjectsV2Request()

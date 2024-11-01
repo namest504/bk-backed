@@ -28,6 +28,9 @@ public class BalloonController {
 
     private final BalloonService balloonService;
 
+    /**
+     * 모든 풍선 위치를 검색
+     */
     @GetMapping
     public ResponseEntity<List<BalloonPositionResponse>> getAllConcurrentBalloonPosition() {
         final List<BalloonPositionResponse> result = balloonService.findAll();
@@ -37,6 +40,9 @@ public class BalloonController {
                 .body(result);
     }
 
+    /**
+     * 특정 풍선에 대한 페이지 처리된 댓글 목록을 검색
+     */
     @GetMapping("/{id}/comments")
     public ResponseEntity<PagedModel<BalloonCommentResponse>> getPagedComments(
             @PathVariable(value = "id") Long balloonPositionId,
@@ -47,6 +53,9 @@ public class BalloonController {
         return ResponseEntity.ok(pagedComments);
     }
 
+    /**
+     * 특정 풍선에 대한 새 댓글 생성
+     */
     @PostMapping("/{id}/comments")
     public ResponseEntity<Void> createComment(
             @PathVariable(value = "id") Long balloonPositionId,
@@ -57,6 +66,9 @@ public class BalloonController {
                 .build();
     }
 
+    /**
+     * 신고 개수가 포함된 풍선 신고 목록을 검색
+     */
     @GetMapping("/report")
     public ResponseEntity<List<BalloonReportWithCount>> getReportBalloon(){
         final List<BalloonReportWithCount> response = balloonService.getReportBalloonCount();
@@ -65,6 +77,9 @@ public class BalloonController {
                 .body(response);
     }
 
+    /**
+     * 이미지 파일과 요청 데이터를 사용하여 초기 신고 데이터 생성
+     */
     @PostMapping("/report")
     public ResponseEntity<ReportBalloonImageCodeResponse> reportBalloonImage(
             @RequestPart("image") MultipartFile file,
@@ -77,6 +92,12 @@ public class BalloonController {
                 .body(response);
     }
 
+    /**
+     * Creates a report for balloon data based on the given list of codes.
+     *
+     * @param codes A list of strings representing balloon codes to include in the report
+     * @return ResponseEntity containing a list of BalloonReportDto objects representing the reported balloon data
+     */
     @GetMapping("/report/status")
     public ResponseEntity<List<BalloonReportDto>> createReportBalloonData(
             @RequestParam("codes") List<String> codes

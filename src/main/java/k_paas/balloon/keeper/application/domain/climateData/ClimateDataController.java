@@ -24,6 +24,9 @@ public class ClimateDataController {
     private final ClimateDataService climateDataService;
     private final ClimateBatchAsyncWrapper climateBatchAsyncWrapper;
 
+    /**
+     * 가장 최근에 저장된 NCP Object Storage 의 CSV 파일 경로를 검색
+     */
     @ValidAPIKey
     @GetMapping("/data-path")
     public ResponseEntity<ClimateDataPathResponse> getResentBatchedCsvPath() {
@@ -34,6 +37,10 @@ public class ClimateDataController {
                 .body(recentCsvFilePath);
     }
 
+    /**
+     * 기후 데이터 시뮬레이션을 위한 학습 과정 시작 트리거
+     * 시뮬레이션 서버에서 학습 로직을 비동기 수행 처리 후 응답
+     */
     @ValidAPIKey
     @GetMapping("/simulation/init")
     public ResponseEntity<Void> initLearning() {
