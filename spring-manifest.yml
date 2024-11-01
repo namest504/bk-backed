@@ -47,7 +47,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: server-secret
-                  key: contest73-bucket
+                  key: bucket-name
             - name: PROJECT_API_KEY
               valueFrom:
                 secretKeyRef:
