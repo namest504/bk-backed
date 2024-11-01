@@ -3,6 +3,7 @@ package k_paas.balloon.keeper.infrastructure.persistence.objectStorage.ncp;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,15 +13,11 @@ import java.util.List;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class NcpObjectStorageService {
 
-    private static final String bucketName = "contest73-bucket";
-
     private final AmazonS3Client amazonS3Client;
-
-    public NcpObjectStorageService(AmazonS3Client amazonS3Client) {
-        this.amazonS3Client = amazonS3Client;
-    }
+    private final NcpProperty ncpProperty;
 
     /**
      * NCP Object Storage 버킷의 지정된 경로에 객체를 저장
@@ -36,7 +33,7 @@ public class NcpObjectStorageService {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(0L);
         objectMetadata.setContentType("application/x-directory");
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, folderName, new ByteArrayInputStream(new byte[0]), objectMetadata);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(ncpProperty.bucketName(), folderName, new ByteArrayInputStream(new byte[0]), objectMetadata);
 
 
         try {
@@ -53,7 +50,7 @@ public class NcpObjectStorageService {
         try {
             File file = new File(localFileName);
             validateFileSize(file);
-            amazonS3Client.putObject(bucketName, objectName, file);
+            amazonS3Client.putObject(ncpProperty.bucketName(), objectName, file);
             log.info("Object {} has been created.", objectName);
         } catch (AmazonS3Exception e) {
             e.printStackTrace();
@@ -89,7 +86,7 @@ public class NcpObjectStorageService {
     public String getLatestObjectPath(String path) {
         try {
             ListObjectsV2Request listObjectsRequest = new ListObjectsV2Request()
-                    .withBucketName(bucketName)
+                    .withBucketName(ncpProperty.bucketName())
                     .withPrefix(path);
 
             ListObjectsV2Result result;

@@ -25,6 +25,7 @@ spring:
 ncp:
   accessKey: ${NCP_ACCESSKEY}
   secretKey: ${NCP_SECRETKEY}
+  bucketName: ${NCP_BUCKETNAME}
 
 project:
   api:

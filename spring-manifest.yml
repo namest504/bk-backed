@@ -43,6 +43,11 @@ spec:
                 secretKeyRef:
                   name: server-secret
                   key: ncp-secret-key
+            - name: NCP_BUCKETNAME
+              valueFrom:
+                secretKeyRef:
+                  name: server-secret
+                  key: contest73-bucket
       imagePullSecrets:
         - name: regcred
 
