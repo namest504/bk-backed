@@ -52,12 +52,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: server-secret
-                  key: VGhpcyBJcyBLZXkgVXNlZCBCeSBBUElUaGlzIElzIEtleSBVc2VkIEJ5IEFQSVRoaXMgSXMgS2V5IFVzZWQgQnkgQVBJVGhpcyBJcyBLZXkgVXNlZCBCeSBBUElUaGlzIElzIEtleSBVc2VkIEJ5IEFQSVRoaXMgSXMgS2V5IFVzZWQgQnkgQVBJVGhpcyBJcyBLZXkgVXNlZCBCeSBBUElUaGlzIElzIEtleSBVc2VkIEJ5IEFQSVRoaXMgSXMgS2V5IFVzZWQgQnkgQVBJVGhpcyBJcyBLZXkgVXNlZCBCeSBBUEk=
+                  key: project-api-key
             - name: CLIMATE_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: server-secret
-                  key: KolWTlbHQaqJVk5WxwGqnw
+                  key: climate-api-key
       imagePullSecrets:
         - name: regcred
 
