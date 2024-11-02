@@ -93,10 +93,7 @@ public class BalloonController {
     }
 
     /**
-     * Creates a report for balloon data based on the given list of codes.
-     *
-     * @param codes A list of strings representing balloon codes to include in the report
-     * @return ResponseEntity containing a list of BalloonReportDto objects representing the reported balloon data
+     * 일련 코드에 맞는 풍선 신고 데이터들에 대한 상태 조회
      */
     @GetMapping("/report/status")
     public ResponseEntity<List<BalloonReportDto>> createReportBalloonData(
@@ -107,5 +104,4 @@ public class BalloonController {
         return ResponseEntity.status(OK)
                 .body(reportedBalloon);
     }
-
 }

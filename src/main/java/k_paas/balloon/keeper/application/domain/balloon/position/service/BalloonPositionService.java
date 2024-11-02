@@ -17,7 +17,7 @@ public class BalloonPositionService {
 
     @Transactional(readOnly = true)
     public List<BalloonPositionResponse> findAll() {
-        return balloonPositionRepository.findPositionsWithinLast12Hours()
+        return balloonPositionRepository.findPositions()
                 .stream()
                 .map(BalloonPositionResponse::from)
                 .collect(Collectors.toList());

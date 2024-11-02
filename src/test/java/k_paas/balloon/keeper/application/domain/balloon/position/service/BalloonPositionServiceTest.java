@@ -49,7 +49,7 @@ class BalloonPositionServiceTest {
                         190051)
         );
 
-        given(balloonPositionRepository.findPositionsWithinLast12Hours())
+        given(balloonPositionRepository.findPositions())
                 .willReturn(List.of(mockBalloonPosition));
 
         // When
