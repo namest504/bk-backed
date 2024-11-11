@@ -54,11 +54,103 @@
 ### 오물 풍선 낙하 이미지 신고 기능
 - 오물 풍선 낙하 식별시 이미지를 통한 직접 신고 가능
 
+### 백그라운드 작업 수동 실행을 위한 API 제공
+- 보안을 위한 헤더기반 API-KEY 검증
+
 ### Kubectl Secret 생성 간소화 Shell Script
 - NCP K8s내에서 사용할 환경변수 설정 작업 간소화
 
 ---
 ## 트러블 슈팅
+
+### Batch 수행시 데이터 요청시 Heap Memory OOM 발생
+
+초기 요구사항에 따라 배치 작업 한 번에 약 1700번의 API 요청을 수행해야 했습니다.
+이는 Spring Batch의 기본 싱글 스레드 처리 방식으로는 심각한 병목 현상을 일으킬 수 있는 상황이었습니다.
+또한 U벡터와 V벡터 데이터를 각각 받아 하나의 데이터 셋으로 가공하는 과정에서 시간이 소요되었습니다.
+더불어 API 호출 및 데이터 가공에 걸리는 시간으로 인해 Chunk 크기만큼의 데이터가 쌓이는 데 시간이 걸렸고, 이로 인해 Write 작업으로 넘어가는 데 지연이 발생했습니다.
+그 결과로 API 응답 데이터와 가공된 데이터가 Write 작업으로 넘어가지 못하고 힙 메모리에 계속 누적되어 OOM이 발생하게 되었습니다.
+
+해결 방법
+
+ClimateReader 의 성능을 개선 할 필요가 있었습니다.
+API 개별의 결과로 가공하는 것이 아닌 U,V 벡터를 조합하여 데이터셋을 만드는 과정이였으므로 
+```Java
+// ClimateReader
+private List<ClimateDataDto> processClimateData(int altitude, String predictHour, String timeStamp) {
+        CompletableFuture<String[][]> completableUVectors = sendClimateRequest(2002, altitude, predictHour, timeStamp);
+        CompletableFuture<String[][]> completableVVectors = sendClimateRequest(2003, altitude, predictHour, timeStamp);
+
+        List<ClimateDataDto> result = CompletableFuture.allOf(completableUVectors, completableVVectors)
+                .thenApply(r -> {
+                    String[][] uVectorArray = completableUVectors.join();
+                    String[][] vVectorArray = completableVVectors.join();
+                    List<ClimateDataDto> climateDataDtos = saveClimateData(altitude, uVectorArray, vVectorArray);
+                    return climateDataDtos;
+                }).join();
+        return result;
+    }
+```
+CompletableFuture.allOf()를 사용하여 두 API 요청이 모두 완료될 때까지 기다린 후, 결과를 합쳐 데이터 셋으로 가공하도록 하였습니다.
+
+```Java
+List<ClimateDataDto> chunk = new ArrayList<>();
+while (chunk.size() < CHUNK_SIZE && !isCompleted) {
+    if (buffer.isEmpty()) {
+        if (currentAltitudeIndex >= ISOBARIC_ALTITUDE.length) {
+            isCompleted = true;
+            break;
+        }
+        buffer = processClimateData(currentAltitudeIndex, predictHour, timestamp);
+
+        currentAltitudeIndex++;
+    }
+
+    int itemsToAdd = Math.min(CHUNK_SIZE - chunk.size(), buffer.size());
+    chunk.addAll(buffer.subList(0, itemsToAdd));
+    buffer = new ArrayList<>(buffer.subList(itemsToAdd, buffer.size()));
+}
+
+if (chunk.isEmpty()) {
+    isCompleted = true;
+    return null;
+}
+```
+한 차례의 API 결과로 Chunk 사이즈에 도달할 경우 바로 Reader 작업이 끝나버리는 현상을 방지하기 위해 임의이 버퍼를 두어 점진적으로 데이터를 처리하도록 하였습니다.
+
+### Batch 트리거 API 응답 지연으로 인한 Client 재요청 이슈
+
+기상청 API가 실시간으로 업데이트가 되지 않아 배치가 실패하는 경우가 발생하였습니다.
+이에 대한 대책으로 단순 REST API 요청을 통해 배치 수행을 수동으로 실행할 수 있도록 하였습니다.
+
+하지만 일반적인 API로 배치 작업을 수행하도록 할 경우 배치가 완료되기 전까지는 응답을 처리해주지 못하는 상황이 발생하였습니다.
+
+```Java
+// ClimateDataController
+@ValidAPIKey
+@GetMapping("/batch/init")
+public ResponseEntity<Void> initBatchJob(
+        @ModelAttribute @Valid ClimateRunnerRequest climateRunnerRequest
+) {
+    climateBatchRunner.run(climateRunnerRequest);
+
+    return ResponseEntity.status(ACCEPTED)
+            .build();
+}
+```
+이로인해 요청을 보내는 Client 측에서 요청을 재전송 하는 문제가 발생하였고 N번의 배치 작업이 동시에 수행되는 문제가 발생했습니다.
+
+해결 방법
+```Java
+// ClimateBatchAsyncWrapper
+@Async("threadPoolTaskExecutor")
+public void runBatch(ClimateRunnerRequest request) {
+    CompletableFuture.runAsync(() -> {
+        climateBatchRunner.run(request);
+    });
+}
+```
+배치 작업을 CompletableFuture으로 결과를 기다리지 않고 비동기로 수행하도록 하였습니다.
 
 ---
 ## 아키텍쳐
